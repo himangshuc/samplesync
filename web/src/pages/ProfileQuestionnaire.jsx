@@ -58,10 +58,11 @@ function SectionSplash({ intro, onContinue }) {
 
 /* ─── Completion / Transition Screen ─────────────────────────────────────── */
 function CompletionScreen({ currentBranch, onStartNext, onTakeLater }) {
-  const pending   = qState.getPendingBranches();
-  const nextBranch = pending[0] ?? null;
+  const pending        = qState.getPendingBranches();
   const allBranchesDone = qState.isAllBranchesDone();
-  const selections = qState.getBranchStatus();
+  const selections     = qState.getBranchStatus();
+  const nextBranch     = pending[0] ?? null;
+  const [selected, setSelected] = useState(nextBranch);
 
   if (currentBranch === 'debrief') {
     return (
@@ -96,19 +97,34 @@ function CompletionScreen({ currentBranch, onStartNext, onTakeLater }) {
 
         <div className="space-y-3 mb-8">
           {selections.map(({ branch, done }) => {
-            const meta = BRANCH_META[branch];
+            const meta        = BRANCH_META[branch];
+            const isSelected  = selected === branch;
+            const isPending   = !done;
             return (
-              <div key={branch} className={`flex items-center gap-4 p-4 rounded-2xl border-2 ${done ? 'border-lime-500 bg-lime-50' : 'border-gray-200 bg-white'}`}>
-                <span className="text-2xl">{meta.emoji}</span>
+              <button
+                key={branch}
+                onClick={() => isPending && setSelected(branch)}
+                disabled={done}
+                className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all
+                  ${done
+                    ? 'border-lime-500 bg-lime-50 cursor-default'
+                    : isSelected
+                    ? 'border-navy-700 bg-navy-700 shadow-md'
+                    : 'border-gray-200 bg-white hover:border-navy-400'
+                  }`}
+              >
+                <span className="text-2xl shrink-0">{meta.emoji}</span>
                 <div className="flex-1">
-                  <p className="font-bold text-navy-700 text-sm">{meta.label}</p>
-                  <p className="text-navy-700/50 text-xs">{meta.description}</p>
+                  <p className={`font-bold text-sm ${isSelected && !done ? 'text-white' : 'text-navy-700'}`}>{meta.label}</p>
+                  <p className={`text-xs ${isSelected && !done ? 'text-white/60' : 'text-navy-700/50'}`}>{meta.description}</p>
                 </div>
                 {done
                   ? <span className="w-6 h-6 rounded-full bg-lime-500 flex items-center justify-center shrink-0"><Check className="w-3.5 h-3.5 text-navy-700" /></span>
+                  : isSelected
+                  ? <span className="w-6 h-6 rounded-full bg-lime-500 flex items-center justify-center shrink-0"><Check className="w-3.5 h-3.5 text-navy-700" /></span>
                   : <span className="text-xs font-semibold text-navy-700/40 shrink-0">Pending</span>
                 }
-              </div>
+              </button>
             );
           })}
         </div>
@@ -116,10 +132,11 @@ function CompletionScreen({ currentBranch, onStartNext, onTakeLater }) {
         {nextBranch ? (
           <div className="space-y-3">
             <button
-              onClick={() => onStartNext(nextBranch)}
-              className="w-full py-4 bg-navy-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-navy-600 transition-colors"
+              onClick={() => selected && onStartNext(selected)}
+              disabled={!selected}
+              className="w-full py-4 bg-navy-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-navy-600 transition-colors disabled:opacity-40"
             >
-              Start {BRANCH_META[nextBranch].emoji} {BRANCH_META[nextBranch].label} <ArrowRight className="w-4 h-4" />
+              Start {selected && BRANCH_META[selected].emoji} {selected && BRANCH_META[selected].label} <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={onTakeLater}
