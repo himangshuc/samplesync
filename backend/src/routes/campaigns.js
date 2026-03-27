@@ -31,6 +31,14 @@ router.post(
       const total_cost = (price_per_sample || 0) * sample_quantity;
       // Coerce empty strings to null for DATE columns
       const toDate = (v) => (v && v !== '') ? v : null;
+      const startDateVal = toDate(start_date);
+      const endDateVal   = toDate(end_date);
+
+      // Derive initial status from start_date rather than always defaulting to 'draft'
+      let campaign_status = 'draft';
+      if (startDateVal) {
+        campaign_status = new Date(startDateVal) > new Date() ? 'scheduled' : 'active';
+      }
 
       const result = await db.query(
         `INSERT INTO campaigns (brand_id, title, description, purpose,
@@ -38,8 +46,8 @@ router.post(
           product_name, product_description, product_images, sample_quantity,
           pickup_address, pickup_city, pickup_state, pickup_zip,
           pickup_date, pickup_time_window, pickup_contact_name, pickup_contact_phone,
-          price_per_sample, total_cost, start_date, end_date)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
+          price_per_sample, total_cost, start_date, end_date, campaign_status)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
          RETURNING *`,
         [req.user.id, title, description, purpose,
          target_age_min || null, target_age_max || null, target_gender,
@@ -47,7 +55,7 @@ router.post(
          product_name, product_description, product_images || [], sample_quantity,
          pickup_address, pickup_city, pickup_state, pickup_zip,
          toDate(pickup_date), pickup_time_window, pickup_contact_name, pickup_contact_phone,
-         price_per_sample, total_cost, toDate(start_date), toDate(end_date)]
+         price_per_sample, total_cost, startDateVal, endDateVal, campaign_status]
       );
 
       res.status(201).json(result.rows[0]);

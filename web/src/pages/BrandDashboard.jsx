@@ -3,12 +3,17 @@ import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import { Plus, Package, BarChart3, Clock, CheckCircle, DollarSign, ChevronRight } from 'lucide-react';
 
-/** Derive a display status from campaign data */
+/** Derive a display status from campaign data.
+ *  A campaign is only truly a draft if it has no start_date (form incomplete).
+ *  Once a start_date is set, status is driven by dates, not the DB default. */
 function displayStatus(c) {
-  if (c.campaign_status === 'draft') return 'draft';
   if (c.campaign_status === 'completed') return 'completed';
-  // active in the DB but start_date is in the future → scheduled
-  if (c.start_date && new Date(c.start_date) > new Date()) return 'scheduled';
+  if (!c.start_date) return 'draft'; // no start date = incomplete / draft
+  const now   = new Date();
+  const start = new Date(c.start_date);
+  const end   = c.end_date ? new Date(c.end_date) : null;
+  if (end && end < now) return 'completed';
+  if (start > now)      return 'scheduled';
   return 'active';
 }
 
