@@ -79,4 +79,38 @@ router.get('/samples', authenticate, requireRole('user'), async (req, res) => {
   }
 });
 
+// ─── SAVE QUESTIONNAIRE RESPONSES ───
+// NOTE: The ALTER TABLE below is idempotent (IF NOT EXISTS). Move to a migration script before scaling.
+router.post('/questionnaire', authenticate, requireRole('user'), async (req, res) => {
+  try {
+    await db.query(`
+      ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS questionnaire_data JSONB,
+        ADD COLUMN IF NOT EXISTS questionnaire_completed BOOLEAN DEFAULT FALSE
+    `);
+
+    const { answers, flow_completed } = req.body;
+    if (!answers || typeof answers !== 'object') {
+      return res.status(400).json({ error: 'Invalid questionnaire data.' });
+    }
+
+    await db.query(
+      `UPDATE users
+       SET questionnaire_data = $1,
+           questionnaire_completed = TRUE,
+           updated_at = NOW()
+       WHERE id = $2`,
+      [
+        JSON.stringify({ answers, flow_completed, submitted_at: new Date().toISOString() }),
+        req.user.id,
+      ]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Save questionnaire error:', err);
+    res.status(500).json({ error: 'Failed to save questionnaire.' });
+  }
+});
+
 module.exports = router;

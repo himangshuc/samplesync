@@ -8,6 +8,7 @@ import UserDashboard from './pages/UserDashboard';
 import BrandDashboard from './pages/BrandDashboard';
 import NewCampaign from './pages/NewCampaign';
 import Contact from './pages/Contact';
+import ProfileQuestionnaire from './pages/ProfileQuestionnaire';
 import Blogs from './pages/Blogs';
 import News from './pages/News';
 
@@ -35,6 +36,8 @@ function AppRoutes() {
       <Route path="/dashboard" element={<ProtectedRoute requiredRole="user"><UserDashboard /></ProtectedRoute>} />
       <Route path="/brand/dashboard" element={<ProtectedRoute requiredRole="brand"><BrandDashboard /></ProtectedRoute>} />
       <Route path="/brand/campaigns/new" element={<ProtectedRoute requiredRole="brand"><NewCampaign /></ProtectedRoute>} />
+
+      <Route path="/questionnaire" element={<ProtectedRoute requiredRole="user"><ProfileQuestionnaire /></ProtectedRoute>} />
 
       <Route path="/contact" element={<Contact />} />
       <Route path="/blogs"   element={<Blogs />} />

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
-import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight } from 'lucide-react';
+import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight, ArrowRight } from 'lucide-react';
 
 export default function UserDashboard() {
   const { user } = useAuth();
@@ -45,12 +46,37 @@ export default function UserDashboard() {
     );
   }
 
+  const [questionnaireDone] = useState(
+    () => localStorage.getItem('questionnaire_done') === 'true'
+  );
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
       <div className="mb-10">
         <h1 className="font-display text-3xl text-gray-900">Welcome back, {user?.first_name}</h1>
         <p className="text-gray-500 mt-1">Here's what's happening with your samples.</p>
       </div>
+
+      {/* Complete-profile CTA — shown until questionnaire is done */}
+      {!questionnaireDone && (
+        <div className="bg-navy-700 rounded-2xl p-6 mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+          <div className="flex items-center gap-4">
+            <span className="text-lime-500 font-black text-3xl leading-none shrink-0">*</span>
+            <div>
+              <h2 className="font-bold text-xl text-white">Complete your profile</h2>
+              <p className="text-white/50 text-sm mt-0.5">
+                Help us match you with samples you'll actually love. Takes about 5 minutes.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/questionnaire"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-2.5 bg-lime-500 text-navy-700 font-bold rounded-full hover:bg-lime-400 transition-colors text-sm"
+          >
+            Start <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
