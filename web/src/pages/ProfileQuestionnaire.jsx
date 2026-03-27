@@ -39,13 +39,15 @@ function OptionCard({ opt, selected, multiMode, onClick }) {
 }
 
 /* ─── Section Intro Splash ────────────────────────────────────────────────── */
-function SectionSplash({ intro, onContinue }) {
+function SectionSplash({ intro, sectionLabel, onContinue }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-6">
       <div className="w-16 h-16 rounded-2xl bg-navy-700 flex items-center justify-center mb-6">
         <span className="font-black text-lime-500 text-3xl leading-none">*</span>
       </div>
-      <p className="text-navy-700/70 text-lg leading-relaxed max-w-md mb-8">{intro}</p>
+      <p className="text-navy-700/70 text-lg leading-relaxed max-w-md mb-8">
+        Welcome to {sectionLabel}! {intro}
+      </p>
       <button
         onClick={onContinue}
         className="inline-flex items-center gap-2 px-8 py-3 bg-navy-700 text-white font-semibold rounded-full hover:bg-navy-600 transition-colors"
@@ -426,7 +428,7 @@ export default function ProfileQuestionnaire() {
         <div className="max-w-2xl mx-auto px-6 py-10">
 
           {needsIntro ? (
-            <SectionSplash intro={question.sectionIntro} onContinue={ackSectionIntro} />
+            <SectionSplash intro={question.sectionIntro} sectionLabel={question.sectionLabel} onContinue={ackSectionIntro} />
           ) : (
             <>
               {/* Section badge */}

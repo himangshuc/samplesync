@@ -9,7 +9,7 @@ export const QUESTIONS = {
     id: 'intro_q1',
     sectionKey: 'intro',
     sectionLabel: 'The Assignment',
-    sectionIntro: "Welcome to the Research Lab, Analyst. Let's build your profile.",
+    sectionIntro: "Let's build your profile.",
     type: 'single',
     question: 'Before we begin, we need to assign you to a Department. Which of these worlds do you live in most often?',
     options: [
@@ -58,7 +58,7 @@ export const QUESTIONS = {
     sectionKey: 'kitchen',
     sectionLabel: 'The Kitchen Check',
     partLabel: 'Part 1',
-    sectionIntro: "Welcome to the Lab! Let's find out your snacking style.",
+    sectionIntro: "Let's find out your snacking style.",
     type: 'single',
     question: "What's inside your kitchen right now?",
     options: [
@@ -249,7 +249,7 @@ export const QUESTIONS = {
     sectionKey: 'bathroom',
     sectionLabel: 'The Vanity Lab',
     partLabel: 'Part 1',
-    sectionIntro: "Welcome to the Vanity Lab! Let's unlock your 'Glow-up' profile.",
+    sectionIntro: "Let's unlock your 'Glow-up' profile.",
     type: 'single',
     question: "If we peeked into your bathroom right now, what's the vibe?",
     options: [
@@ -441,7 +441,7 @@ export const QUESTIONS = {
     id: 'lr_q3',
     sectionKey: 'living',
     sectionLabel: 'The Sanctuary Studio',
-    sectionIntro: "Welcome to the Sanctuary Studio. Let's map out your 'Zen' zone.",
+    sectionIntro: "Let's map out your 'Zen' zone.",
     type: 'single',
     question: "The Weekend Upgrade: It's Saturday morning. How are you improving your space?",
     options: [
@@ -539,7 +539,7 @@ export const QUESTIONS = {
     id: 'w_q1',
     sectionKey: 'wardrobe',
     sectionLabel: 'The Threads & Trend Lab',
-    sectionIntro: "Welcome to the Threads & Trend Lab. Let's calibrate your 'Style Signal.'",
+    sectionIntro: "Let's calibrate your 'Style Signal.'",
     type: 'single',
     question: 'The Wardrobe Vibe: If we opened your closet, what\'s the dominant "Mood"?',
     options: [
@@ -625,7 +625,7 @@ export const QUESTIONS = {
     id: 'w_d3_q1',
     sectionKey: 'wardrobe',
     sectionLabel: 'The Accessory Lab ⌚',
-    sectionIntro: "Welcome to the Accessory Lab. Let's audit the 'Final Touches' of your look.",
+    sectionIntro: "Let's audit the 'Final Touches' of your look.",
     type: 'single',
     question: 'The Accessory Anchor: What is the one item you never leave home without?',
     options: [
@@ -752,7 +752,7 @@ export const QUESTIONS = {
     id: 'p_q1',
     sectionKey: 'pet',
     sectionLabel: 'The Paws & Claws Club',
-    sectionIntro: "Welcome to the Paws & Claws Club. Let's find out who really runs your household!",
+    sectionIntro: "Let's find out who really runs your household!",
     type: 'single',
     question: 'The Furry Profile: Who are we researching for today?',
     options: [
