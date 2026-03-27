@@ -87,11 +87,15 @@ export default function UserDashboard() {
           )}
 
           {/* Intro done — show branch questionnaire cards */}
-          {qProgress.introDone && (
+          {qProgress.introDone && (() => {
+            const totalSteps = 2 + qProgress.branchStatus.length; // signup + intro + branches
+            const doneSteps  = 2 + qProgress.branchStatus.filter(b => b.done).length;
+            const pct        = Math.round((doneSteps / totalSteps) * 100);
+            return (
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="font-bold text-lg text-navy-700">Your Product Questionnaires</h2>
+                  <h2 className="font-bold text-lg text-navy-700">Complete your profile</h2>
                   <p className="text-navy-700/50 text-sm">Complete these to get perfectly matched samples.</p>
                 </div>
                 {qProgress.nextBranch && (
@@ -110,6 +114,17 @@ export default function UserDashboard() {
                     Final Debrief <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 )}
+              </div>
+
+              {/* Profile completion progress bar */}
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex-1 h-1.5 bg-navy-700/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-lime-500 rounded-full transition-all duration-500"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <span className="text-xs font-bold text-navy-700 shrink-0">{pct}% complete</span>
               </div>
 
               {/* Branch cards grid */}
@@ -171,7 +186,8 @@ export default function UserDashboard() {
                 )}
               </div>
             </div>
-          )}
+            );
+          })()}
         </div>
       )}
 
