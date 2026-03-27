@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
-import { Package, ArrowRight, ArrowLeft, Check, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Eye, EyeOff } from 'lucide-react';
+import PlacesAutocomplete from '../components/PlacesAutocomplete';
 
 const CATEGORIES = ['Skincare', 'Haircare', 'Snacks', 'Beverages', 'Wellness', 'Tech', 'Pet Products', 'Home & Kitchen', 'Baby & Kids', 'Fitness'];
 const DIETARY = ['None', 'Gluten-free', 'Vegan', 'Vegetarian', 'Dairy-free', 'Nut-free', 'Keto', 'Halal', 'Kosher'];
@@ -151,15 +152,26 @@ export default function Signup() {
                     <input type="date" className="input-field" value={userForm.date_of_birth} onChange={(e) => updateUser('date_of_birth', e.target.value)} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                    <select className="input-field" value={userForm.gender} onChange={(e) => updateUser('gender', e.target.value)}>
-                      <option value="">Select</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="non-binary">Non-binary</option>
-                      <option value="prefer-not-to-say">Prefer not to say</option>
-                    </select>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <input
+                      className="input-field"
+                      placeholder="10-digit mobile number"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={userForm.phone}
+                      onChange={(e) => updateUser('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    />
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                  <select className="input-field" value={userForm.gender} onChange={(e) => updateUser('gender', e.target.value)}>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="non-binary">Non-binary</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                  </select>
                 </div>
               </div>
             )}
@@ -219,7 +231,19 @@ export default function Signup() {
                 <h2 className="font-display text-xl mb-2">Delivery Address</h2>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 1<Req /></label>
-                  <input className="input-field" placeholder="123 Main St" value={userForm.address_line1} onChange={(e) => updateUser('address_line1', e.target.value)} />
+                  <PlacesAutocomplete
+                    className="input-field"
+                    placeholder="Start typing your address…"
+                    value={userForm.address_line1}
+                    onChange={(v) => updateUser('address_line1', v)}
+                    onSelect={(p) => setUserForm((f) => ({ ...f,
+                      address_line1: p.address_line1,
+                      address_line2: p.address_line2 || f.address_line2,
+                      city: p.city || f.city,
+                      state: p.state || f.state,
+                      zip_code: p.zip_code || f.zip_code,
+                    }))}
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
@@ -235,8 +259,14 @@ export default function Signup() {
                     <input className="input-field" value={userForm.state} onChange={(e) => updateUser('state', e.target.value)} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ZIP<Req /></label>
-                    <input className="input-field" value={userForm.zip_code} onChange={(e) => updateUser('zip_code', e.target.value)} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">PIN Code<Req /></label>
+                    <input
+                      className="input-field"
+                      value={userForm.zip_code}
+                      maxLength={6}
+                      inputMode="numeric"
+                      onChange={(e) => updateUser('zip_code', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    />
                   </div>
                 </div>
               </div>
@@ -268,7 +298,14 @@ export default function Signup() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input className="input-field" value={brandForm.phone} onChange={(e) => updateBrand('phone', e.target.value)} />
+                  <input
+                    className="input-field"
+                    placeholder="10-digit mobile number"
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={brandForm.phone}
+                    onChange={(e) => updateBrand('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  />
                 </div>
               </div>
             )}

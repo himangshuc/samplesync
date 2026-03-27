@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import PlacesAutocomplete from '../components/PlacesAutocomplete';
 
 const PURPOSES = [
   { value: 'product_launch',     label: 'Product Launch' },
@@ -146,7 +147,19 @@ export default function NewCampaign() {
           <p className="text-sm text-gray-500">Where should we pick up the samples?</p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Address<Req /></label>
-            <input className="input-field" value={form.pickup_address} onChange={(e) => update('pickup_address', e.target.value)} />
+            <PlacesAutocomplete
+              className="input-field"
+              placeholder="Start typing pickup address…"
+              value={form.pickup_address}
+              onChange={(v) => update('pickup_address', v)}
+              onSelect={(p) => setForm((f) => ({
+                ...f,
+                pickup_address: p.address_line1,
+                pickup_city:    p.city    || f.pickup_city,
+                pickup_state:   p.state   || f.pickup_state,
+                pickup_zip:     p.zip_code || f.pickup_zip,
+              }))}
+            />
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
@@ -158,8 +171,14 @@ export default function NewCampaign() {
               <input className="input-field" value={form.pickup_state} onChange={(e) => update('pickup_state', e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">ZIP<Req /></label>
-              <input className="input-field" value={form.pickup_zip} onChange={(e) => update('pickup_zip', e.target.value)} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">PIN Code<Req /></label>
+              <input
+                className="input-field"
+                inputMode="numeric"
+                maxLength={6}
+                value={form.pickup_zip}
+                onChange={(e) => update('pickup_zip', e.target.value.replace(/\D/g, '').slice(0, 6))}
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -179,7 +198,14 @@ export default function NewCampaign() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Contact Phone<Req /></label>
-              <input className="input-field" value={form.pickup_contact_phone} onChange={(e) => update('pickup_contact_phone', e.target.value)} />
+              <input
+                className="input-field"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="10-digit number"
+                value={form.pickup_contact_phone}
+                onChange={(e) => update('pickup_contact_phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+              />
             </div>
           </div>
         </div>
