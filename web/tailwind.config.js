@@ -42,6 +42,7 @@ export default {
       animation: {
         'marquee-left':       'marquee-left 30s linear infinite',
         'marquee-left-slow':  'marquee-left 50s linear infinite',
+        'marquee-left-fast':  'marquee-left 18s linear infinite',
         'marquee-right':      'marquee-right 30s linear infinite',
         'marquee-right-slow': 'marquee-right 50s linear infinite',
       },

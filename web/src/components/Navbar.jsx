@@ -27,10 +27,10 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-1 bg-navy-700 rounded-full px-2 py-1.5">
           {!role ? (
             <>
-              <Link to="/"            className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">Home</Link>
-              <Link to="/how-it-works" className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">How it works</Link>
-              <Link to="/signup"       className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">Signup</Link>
-              <Link to="/login"        className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">Contact</Link>
+              <Link to="/"           className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">Home</Link>
+              <a    href="/#how-it-works" className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">How it works</a>
+              <Link to="/signup"     className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">Signup</Link>
+              <Link to="/contact"    className="text-sm font-medium text-white px-4 py-1.5 rounded-full hover:bg-white/10 transition-colors">Contact</Link>
             </>
           ) : role === 'user' ? (
             <>
@@ -59,10 +59,10 @@ export default function Navbar() {
         <div className="md:hidden bg-navy-700 px-6 pb-5 pt-2 space-y-1">
           {!role ? (
             <>
-              <Link to="/"             className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>Home</Link>
-              <Link to="/how-it-works" className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>How it works</Link>
-              <Link to="/signup"       className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>Signup</Link>
-              <Link to="/login"        className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>Contact</Link>
+              <Link to="/"          className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>Home</Link>
+              <a href="/#how-it-works" className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>How it works</a>
+              <Link to="/signup"    className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>Signup</Link>
+              <Link to="/contact"   className="block text-sm font-medium text-white py-2" onClick={() => setOpen(false)}>Contact</Link>
             </>
           ) : (
             <>

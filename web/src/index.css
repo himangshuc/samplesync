@@ -39,3 +39,12 @@
 .marquee-track:hover .marquee-inner {
   animation-play-state: paused;
 }
+
+/* product float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+.float-animate {
+  animation: float 4s ease-in-out infinite;
+}

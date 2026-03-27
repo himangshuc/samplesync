@@ -132,20 +132,20 @@ const ChipsBag = () => (
   </svg>
 );
 
-/* Positions: [tailwind classes, rotation, component] */
+/* Positions: [tailwind classes, rotation, float-delay(s), component] */
 const HERO_PRODUCTS = [
-  { cls: 'top-[13%] left-[7%]',   rot: '-22deg', El: SnackBar        },
-  { cls: 'top-[5%]  left-[30%]',  rot:  '6deg',  El: WaterBottle     },
-  { cls: 'top-[8%]  right-[30%]', rot: '-7deg',  El: FoilPouch       },
-  { cls: 'top-[8%]  right-[8%]',  rot: '16deg',  El: PumpBottle      },
-  { cls: 'top-[22%] right-[4%]',  rot: '-3deg',  El: VitaminBottle   },
-  { cls: 'top-[60%] left-[6%]',   rot:  '6deg',  El: FoilPouch       },
-  { cls: 'top-[68%] left-[15%]',  rot: '-9deg',  El: MoisturizerJar  },
-  { cls: 'top-[72%] left-[34%]',  rot: '-4deg',  El: SerumDropper    },
-  { cls: 'top-[76%] left-[48%]',  rot: '14deg',  El: SnackBar        },
-  { cls: 'top-[65%] right-[25%]', rot: '-11deg', El: KombuchaBottle  },
-  { cls: 'top-[18%] left-[13%]',  rot: '-14deg', El: SodaCan         },
-  { cls: 'top-[62%] right-[7%]',  rot:  '9deg',  El: ChipsBag        },
+  { cls: 'top-[13%] left-[7%]',   rot: '-22deg', delay: 0.0, El: SnackBar        },
+  { cls: 'top-[5%]  left-[30%]',  rot:  '6deg',  delay: 0.7, El: WaterBottle     },
+  { cls: 'top-[8%]  right-[30%]', rot: '-7deg',  delay: 1.4, El: FoilPouch       },
+  { cls: 'top-[8%]  right-[8%]',  rot: '16deg',  delay: 0.3, El: PumpBottle      },
+  { cls: 'top-[22%] right-[4%]',  rot: '-3deg',  delay: 1.8, El: VitaminBottle   },
+  { cls: 'top-[60%] left-[6%]',   rot:  '6deg',  delay: 1.1, El: FoilPouch       },
+  { cls: 'top-[68%] left-[15%]',  rot: '-9deg',  delay: 0.5, El: MoisturizerJar  },
+  { cls: 'top-[72%] left-[34%]',  rot: '-4deg',  delay: 2.0, El: SerumDropper    },
+  { cls: 'top-[76%] left-[48%]',  rot: '14deg',  delay: 0.9, El: SnackBar        },
+  { cls: 'top-[65%] right-[25%]', rot: '-11deg', delay: 1.6, El: KombuchaBottle  },
+  { cls: 'top-[18%] left-[13%]',  rot: '-14deg', delay: 0.2, El: SodaCan         },
+  { cls: 'top-[62%] right-[7%]',  rot:  '9deg',  delay: 1.3, El: ChipsBag        },
 ];
 
 /* ─── "How it works" step card ─── */
@@ -209,10 +209,12 @@ export default function Landing() {
       ══════════════════════════════════════ */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#EFEFEF]">
 
-        {/* Scattered product illustrations */}
-        {HERO_PRODUCTS.map(({ cls, rot, El }, i) => (
+        {/* Scattered product illustrations — outer div handles position+rotation, inner handles float */}
+        {HERO_PRODUCTS.map(({ cls, rot, delay, El }, i) => (
           <div key={i} className={`absolute drop-shadow-md ${cls}`} style={{ transform: `rotate(${rot})` }}>
-            <El />
+            <div className="float-animate" style={{ animationDelay: `${delay}s` }}>
+              <El />
+            </div>
           </div>
         ))}
 
@@ -234,7 +236,7 @@ export default function Landing() {
           BRAND LOGOS MARQUEE
       ══════════════════════════════════════ */}
       <section className="bg-navy-700 py-5 overflow-hidden marquee-track">
-        <div className="marquee-inner flex animate-marquee-left-slow whitespace-nowrap">
+        <div className="marquee-inner flex animate-marquee-left-fast whitespace-nowrap">
           {[...BRANDS, ...BRANDS].map((brand, i) => (
             <span key={i} className="text-white font-semibold text-base mx-12 tracking-wide opacity-90 shrink-0">
               {brand}
@@ -246,7 +248,7 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           HOW IT WORKS
       ══════════════════════════════════════ */}
-      <section className="py-24 bg-[#EFEFEF]">
+      <section id="how-it-works" className="py-24 bg-[#EFEFEF]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-6xl md:text-8xl font-black text-navy-700 lowercase mb-4">
@@ -257,21 +259,21 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-5 md:overflow-visible scrollbar-hide">
+          <div className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-5 md:overflow-visible">
             {HOW_STEPS.map((step) => (
-              <div key={step.label} className="min-w-[260px] md:min-w-0 rounded-3xl overflow-hidden shadow-sm flex-shrink-0">
-                {/* Image area */}
-                <div className={`bg-gradient-to-br ${step.bg} h-52 flex items-center justify-center text-6xl`}>
+              <div key={step.label} className="min-w-[220px] md:min-w-0 rounded-3xl overflow-hidden shadow-sm flex-shrink-0 flex flex-col" style={{ height: '400px' }}>
+                {/* Image area — fills remaining space */}
+                <div className={`bg-gradient-to-br ${step.bg} flex-1 flex items-center justify-center text-6xl`}>
                   {step.emoji}
                 </div>
-                {/* Navy label area */}
-                <div className="bg-navy-700 p-5 relative">
+                {/* Navy label area — fixed height */}
+                <div className="bg-navy-700 p-5 h-[148px] flex flex-col justify-center">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-3xl font-bold text-white mb-1">{step.label}</h3>
-                      <p className="text-white/60 text-sm leading-snug">{step.sub}</p>
+                      <h3 className="text-2xl font-bold text-white mb-1">{step.label}</h3>
+                      <p className="text-white/60 text-xs leading-snug">{step.sub}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full border-2 border-white/30 flex items-center justify-center shrink-0 ml-3 mt-1">
+                    <div className="w-9 h-9 rounded-full border-2 border-white/30 flex items-center justify-center shrink-0 ml-3">
                       <ArrowRight className="w-4 h-4 text-white" />
                     </div>
                   </div>
@@ -285,15 +287,16 @@ export default function Landing() {
       {/* ══════════════════════════════════════
           COMMUNITY CTA — split layout
       ══════════════════════════════════════ */}
-      <section className="py-16 bg-[#EFEFEF]">
+      <section id="signup" className="py-16 bg-[#EFEFEF]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-4 rounded-3xl overflow-hidden shadow-sm">
             {/* Left — photo */}
-            <div className="bg-yellow-400 min-h-[440px] flex items-center justify-center">
-              <div className="text-center p-10">
-                <div className="text-8xl mb-4">😊</div>
-                <p className="text-yellow-900/60 font-medium">Real people, real opinions</p>
-              </div>
+            <div className="min-h-[440px] overflow-hidden">
+              <img
+                src="/community-woman.jpg"
+                alt="Real people, real opinions"
+                className="w-full h-full object-cover object-center"
+              />
             </div>
             {/* Right — navy panel */}
             <div className="bg-navy-700 p-12 flex flex-col justify-center">
@@ -379,19 +382,9 @@ export default function Landing() {
           START SAMPLING CTA
       ══════════════════════════════════════ */}
       <section className="py-28 bg-[#EFEFEF] relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-8 right-16 w-16 h-16 opacity-60">
-          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {Array.from({ length: 12 }).map((_, i) => {
-              const angle = (i * 360) / 12;
-              const rad = (angle * Math.PI) / 180;
-              return (
-                <line key={i} x1="30" y1="30"
-                  x2={30 + 25 * Math.cos(rad)} y2={30 + 25 * Math.sin(rad)}
-                  stroke="#7EE87E" strokeWidth="2" strokeLinecap="round" />
-              );
-            })}
-          </svg>
+        {/* Decorative star — same asterisk as the logo */}
+        <div className="absolute top-6 right-16 font-black text-lime-500 text-7xl leading-none select-none opacity-70">
+          *
         </div>
         <div className="absolute top-[55%] left-[45%] w-32 h-16 border-2 border-blue-500 rounded-full opacity-30 rotate-[20deg]" />
         <div className="absolute top-[50%] left-[42%] w-8 h-8 bg-lime-400 opacity-40 rounded" />
@@ -421,8 +414,8 @@ export default function Landing() {
             {/* Brand */}
             <div className="md:col-span-1">
               <div className="flex items-end gap-0 mb-4">
-                <span className="font-black text-6xl text-white/90 leading-none">Samp</span>
-                <span className="font-black text-lime-500 text-5xl leading-none">*</span>
+                <span className="font-black text-4xl text-white/90 leading-none">SampleSync</span>
+                <span className="font-black text-lime-500 text-4xl leading-none">*</span>
               </div>
               <p className="text-white/50 text-sm font-semibold leading-snug">
                 Simplifying sampling for brands and consumers
@@ -448,9 +441,10 @@ export default function Landing() {
 
             {/* Links */}
             <div className="space-y-2">
-              {[['info@samplesync.com', '#'], ['Contact', '/login'], ['Blogs', '#'], ['News', '#']].map(([label, href]) => (
-                <p key={label}><a href={href} className="text-white/60 hover:text-white text-sm underline transition-colors">{label}</a></p>
-              ))}
+              <p><a href="mailto:info@samplesync.com" className="text-white/60 hover:text-white text-sm underline transition-colors">info@samplesync.com</a></p>
+              <p><Link to="/contact" className="text-white/60 hover:text-white text-sm underline transition-colors">Contact</Link></p>
+              <p><Link to="/blogs"   className="text-white/60 hover:text-white text-sm underline transition-colors">Blogs</Link></p>
+              <p><Link to="/news"    className="text-white/60 hover:text-white text-sm underline transition-colors">News</Link></p>
             </div>
           </div>
 

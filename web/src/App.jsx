@@ -7,6 +7,9 @@ import Signup from './pages/Signup';
 import UserDashboard from './pages/UserDashboard';
 import BrandDashboard from './pages/BrandDashboard';
 import NewCampaign from './pages/NewCampaign';
+import Contact from './pages/Contact';
+import Blogs from './pages/Blogs';
+import News from './pages/News';
 
 function ProtectedRoute({ children, requiredRole }) {
   const { role, loading } = useAuth();
@@ -32,6 +35,10 @@ function AppRoutes() {
       <Route path="/dashboard" element={<ProtectedRoute requiredRole="user"><UserDashboard /></ProtectedRoute>} />
       <Route path="/brand/dashboard" element={<ProtectedRoute requiredRole="brand"><BrandDashboard /></ProtectedRoute>} />
       <Route path="/brand/campaigns/new" element={<ProtectedRoute requiredRole="brand"><NewCampaign /></ProtectedRoute>} />
+
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/blogs"   element={<Blogs />} />
+      <Route path="/news"    element={<News />} />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
