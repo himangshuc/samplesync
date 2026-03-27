@@ -177,21 +177,34 @@ function CompletionScreen({ currentBranch, onStartNext, onTakeLater }) {
           <div className="space-y-2 mb-8">
             {pending.map(b => {
               const m = BRANCH_META[b];
+              const isSelected = selected === b;
               return (
-                <div key={b} className="flex items-center gap-3 p-3.5 rounded-xl bg-white border border-gray-200">
-                  <span className="text-xl">{m.emoji}</span>
-                  <span className="font-semibold text-navy-700 text-sm">{m.label}</span>
-                  <span className="ml-auto text-xs text-navy-700/40 font-medium">Pending</span>
-                </div>
+                <button
+                  key={b}
+                  onClick={() => setSelected(b)}
+                  className={`w-full flex items-center gap-3 p-4 rounded-2xl border-2 text-left transition-all
+                    ${isSelected
+                      ? 'border-navy-700 bg-navy-700 shadow-md'
+                      : 'border-gray-200 bg-white hover:border-navy-400'
+                    }`}
+                >
+                  <span className="text-xl shrink-0">{m.emoji}</span>
+                  <span className={`font-semibold text-sm flex-1 ${isSelected ? 'text-white' : 'text-navy-700'}`}>{m.label}</span>
+                  {isSelected
+                    ? <span className="w-5 h-5 rounded-full bg-lime-500 flex items-center justify-center shrink-0"><Check className="w-3 h-3 text-navy-700" /></span>
+                    : <span className="text-xs text-navy-700/40 font-medium shrink-0">Pending</span>
+                  }
+                </button>
               );
             })}
           </div>
           <div className="space-y-3">
             <button
-              onClick={() => onStartNext(nextBranch)}
-              className="w-full py-4 bg-navy-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-navy-600 transition-colors"
+              onClick={() => selected && onStartNext(selected)}
+              disabled={!selected}
+              className="w-full py-4 bg-navy-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-navy-600 transition-colors disabled:opacity-40"
             >
-              Start {BRANCH_META[nextBranch].emoji} {BRANCH_META[nextBranch].label} <ArrowRight className="w-4 h-4" />
+              Start {selected && BRANCH_META[selected].emoji} {selected && BRANCH_META[selected].label} <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={onTakeLater}
