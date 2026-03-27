@@ -293,7 +293,7 @@ export default function Landing() {
             {/* Left — photo */}
             <div className="min-h-[440px] overflow-hidden">
               <img
-                src="/community-woman.jpg"
+                src="/community-woman.avif"
                 alt="Real people, real opinions"
                 className="w-full h-full object-cover object-center"
               />
