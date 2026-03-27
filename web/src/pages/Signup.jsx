@@ -65,21 +65,21 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gradient-to-br from-gray-50 to-sage-50/30 px-6 py-16">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#EFEFEF] px-6 py-16">
       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-brand-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-200">
-            <Package className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded-2xl bg-navy-700 flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <span className="font-black text-lime-500 text-2xl leading-none">*</span>
           </div>
-          <h1 className="font-display text-3xl text-gray-900">Create your account</h1>
+          <h1 className="font-black text-3xl text-navy-700">Create your account</h1>
         </div>
 
         {/* Role tabs */}
-        <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+        <div className="flex bg-white rounded-xl p-1 mb-6 shadow-sm">
           {['user', 'brand'].map((t) => (
             <button key={t} onClick={() => { setTab(t); setStep(1); setError(''); }}
               className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${
-                tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
+                tab === t ? 'bg-navy-700 text-white shadow-sm' : 'text-navy-700/50 hover:text-navy-700'
               }`}>
               {t === 'user' ? 'Sampler' : 'Brand'}
             </button>
@@ -89,7 +89,7 @@ export default function Signup() {
         {/* Progress */}
         <div className="flex gap-2 mb-8">
           {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i < step ? 'bg-brand-500' : 'bg-gray-200'}`} />
+            <div key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i < step ? 'bg-lime-500' : 'bg-navy-700/15'}`} />
           ))}
         </div>
 
@@ -148,8 +148,8 @@ export default function Signup() {
                       <button key={c} type="button" onClick={() => toggleArray('product_categories', c.toLowerCase())}
                         className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
                           userForm.product_categories.includes(c.toLowerCase())
-                            ? 'bg-brand-500 text-white border-brand-500'
-                            : 'bg-white text-gray-600 border-gray-200 hover:border-brand-300'
+                            ? 'bg-navy-700 text-white border-navy-700'
+                            : 'bg-white text-gray-600 border-gray-200 hover:border-navy-700/40'
                         }`}>
                         {userForm.product_categories.includes(c.toLowerCase()) && <Check className="w-3.5 h-3.5 inline mr-1" />}
                         {c}
@@ -164,8 +164,8 @@ export default function Signup() {
                       <button key={d} type="button" onClick={() => toggleArray('dietary_restrictions', d.toLowerCase())}
                         className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
                           userForm.dietary_restrictions.includes(d.toLowerCase())
-                            ? 'bg-sage-600 text-white border-sage-600'
-                            : 'bg-white text-gray-600 border-gray-200 hover:border-sage-300'
+                            ? 'bg-lime-500 text-navy-700 border-lime-500'
+                            : 'bg-white text-gray-600 border-gray-200 hover:border-lime-400'
                         }`}>
                         {d}
                       </button>
@@ -180,7 +180,7 @@ export default function Signup() {
                   <div className="flex items-end">
                     <label className="flex items-center gap-3 cursor-pointer py-3">
                       <input type="checkbox" checked={userForm.has_pets} onChange={(e) => updateUser('has_pets', e.target.checked)}
-                        className="w-5 h-5 rounded border-gray-300 text-brand-500 focus:ring-brand-500" />
+                        className="w-5 h-5 rounded border-gray-300 text-navy-700 focus:ring-navy-700" />
                       <span className="text-sm font-medium text-gray-700">I have pets</span>
                     </label>
                   </div>
@@ -304,7 +304,7 @@ export default function Signup() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-brand-500 font-medium hover:text-brand-600">Sign in</Link>
+          <Link to="/login" className="text-navy-700 font-bold hover:text-lime-500">Sign in</Link>
         </p>
       </div>
     </div>

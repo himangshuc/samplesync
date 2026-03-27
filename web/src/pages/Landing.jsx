@@ -132,20 +132,22 @@ const ChipsBag = () => (
   </svg>
 );
 
-/* Positions: [tailwind classes, rotation, float-delay(s), component] */
+/* Positions: [tailwind classes, rotation, float-delay(s), scale, component] */
 const HERO_PRODUCTS = [
-  { cls: 'top-[13%] left-[7%]',   rot: '-22deg', delay: 0.0, El: SnackBar        },
-  { cls: 'top-[5%]  left-[30%]',  rot:  '6deg',  delay: 0.7, El: WaterBottle     },
-  { cls: 'top-[8%]  right-[30%]', rot: '-7deg',  delay: 1.4, El: FoilPouch       },
-  { cls: 'top-[8%]  right-[8%]',  rot: '16deg',  delay: 0.3, El: PumpBottle      },
-  { cls: 'top-[22%] right-[4%]',  rot: '-3deg',  delay: 1.8, El: VitaminBottle   },
-  { cls: 'top-[60%] left-[6%]',   rot:  '6deg',  delay: 1.1, El: FoilPouch       },
-  { cls: 'top-[68%] left-[15%]',  rot: '-9deg',  delay: 0.5, El: MoisturizerJar  },
-  { cls: 'top-[72%] left-[34%]',  rot: '-4deg',  delay: 2.0, El: SerumDropper    },
-  { cls: 'top-[76%] left-[48%]',  rot: '14deg',  delay: 0.9, El: SnackBar        },
-  { cls: 'top-[65%] right-[25%]', rot: '-11deg', delay: 1.6, El: KombuchaBottle  },
-  { cls: 'top-[18%] left-[13%]',  rot: '-14deg', delay: 0.2, El: SodaCan         },
-  { cls: 'top-[62%] right-[7%]',  rot:  '9deg',  delay: 1.3, El: ChipsBag        },
+  { cls: 'top-[4%]  left-[4%]',   rot: '-18deg', delay: 0.0, scale: 1.7, El: SnackBar       },
+  { cls: 'top-[2%]  left-[26%]',  rot:  '7deg',  delay: 0.7, scale: 1.8, El: WaterBottle    },
+  { cls: 'top-[3%]  right-[26%]', rot: '-6deg',  delay: 1.4, scale: 1.7, El: FoilPouch      },
+  { cls: 'top-[4%]  right-[4%]',  rot: '17deg',  delay: 0.3, scale: 1.9, El: PumpBottle     },
+  { cls: 'top-[22%] left-[2%]',   rot: '-10deg', delay: 1.1, scale: 1.6, El: MoisturizerJar },
+  { cls: 'top-[22%] right-[2%]',  rot:  '-4deg', delay: 1.8, scale: 1.6, El: VitaminBottle  },
+  { cls: 'top-[35%] left-[8%]',   rot:  '8deg',  delay: 0.5, scale: 1.7, El: SodaCan        },
+  { cls: 'top-[35%] right-[8%]',  rot: '-12deg', delay: 2.0, scale: 1.6, El: ChipsBag       },
+  { cls: 'top-[38%] left-[20%]',  rot: '11deg',  delay: 0.6, scale: 1.4, El: VitaminBottle  },
+  { cls: 'top-[38%] right-[20%]', rot: '-8deg',  delay: 1.5, scale: 1.4, El: WaterBottle    },
+  { cls: 'top-[62%] left-[4%]',   rot:  '6deg',  delay: 0.9, scale: 1.7, El: FoilPouch      },
+  { cls: 'top-[66%] left-[18%]',  rot: '-7deg',  delay: 1.6, scale: 1.5, El: SerumDropper   },
+  { cls: 'top-[68%] right-[18%]', rot:  '9deg',  delay: 1.2, scale: 1.6, El: KombuchaBottle },
+  { cls: 'top-[63%] right-[4%]',  rot: '-15deg', delay: 0.4, scale: 1.6, El: SnackBar       },
 ];
 
 /* ─── "How it works" step card ─── */
@@ -153,32 +155,32 @@ const HOW_STEPS = [
   {
     label: 'Signup',
     sub: 'Create your profile and let us customise your experience',
-    bg: 'from-purple-100 to-purple-200',
-    emoji: '📱',
+    img: '/step-signup.avif',
+    imgPos: 'object-center',
   },
   {
     label: 'Receive',
     sub: 'Get your first samples delivered to your door',
-    bg: 'from-amber-100 to-amber-200',
-    emoji: '📦',
+    img: '/step-receive.avif',
+    imgPos: 'object-center',
   },
   {
     label: 'Review',
     sub: 'Review the samples you received',
-    bg: 'from-yellow-100 to-yellow-200',
-    emoji: '⭐',
+    img: '/step-review.avif',
+    imgPos: 'object-top',
   },
   {
     label: 'Next Set',
     sub: 'Wait for the next set of samples',
-    bg: 'from-navy-100 to-navy-200',
-    emoji: '🛵',
+    img: '/step-next-set.avif',
+    imgPos: 'object-center',
   },
   {
     label: 'Refer',
     sub: 'Refer your friends and build our community',
-    bg: 'from-pink-100 to-pink-200',
-    emoji: '🤝',
+    img: '/step-refer.avif',
+    imgPos: 'object-center',
   },
 ];
 
@@ -209,9 +211,9 @@ export default function Landing() {
       ══════════════════════════════════════ */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#EFEFEF]">
 
-        {/* Scattered product illustrations — outer div handles position+rotation, inner handles float */}
-        {HERO_PRODUCTS.map(({ cls, rot, delay, El }, i) => (
-          <div key={i} className={`absolute drop-shadow-md ${cls}`} style={{ transform: `rotate(${rot})` }}>
+        {/* Scattered product illustrations — outer div handles position+rotation+scale, inner handles float */}
+        {HERO_PRODUCTS.map(({ cls, rot, delay, scale, El }, i) => (
+          <div key={i} className={`absolute drop-shadow-lg ${cls}`} style={{ transform: `rotate(${rot}) scale(${scale})` }}>
             <div className="float-animate" style={{ animationDelay: `${delay}s` }}>
               <El />
             </div>
@@ -263,8 +265,12 @@ export default function Landing() {
             {HOW_STEPS.map((step) => (
               <div key={step.label} className="min-w-[220px] md:min-w-0 rounded-3xl overflow-hidden shadow-sm flex-shrink-0 flex flex-col" style={{ height: '400px' }}>
                 {/* Image area — fills remaining space */}
-                <div className={`bg-gradient-to-br ${step.bg} flex-1 flex items-center justify-center text-6xl`}>
-                  {step.emoji}
+                <div className="flex-1 overflow-hidden">
+                  <img
+                    src={step.img}
+                    alt={step.label}
+                    className={`w-full h-full object-cover ${step.imgPos}`}
+                  />
                 </div>
                 {/* Navy label area — fixed height */}
                 <div className="bg-navy-700 p-5 h-[148px] flex flex-col justify-center">
