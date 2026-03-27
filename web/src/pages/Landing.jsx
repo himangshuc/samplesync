@@ -1,10 +1,152 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
-/* ─── Floating product silhouettes for hero ─── */
-function ProductShape({ className }) {
-  return <div className={`absolute bg-white/80 shadow-md rounded-2xl ${className}`} />;
-}
+/* ─── Product SVG illustrations ─── */
+const SodaCan = () => (
+  <svg width="52" height="88" viewBox="0 0 52 88" fill="none">
+    <rect x="6" y="13" width="40" height="63" rx="3" fill="#DC1C2E"/>
+    <ellipse cx="26" cy="13" rx="20" ry="6" fill="#C0C0C0"/>
+    <ellipse cx="26" cy="76" rx="20" ry="6" fill="#C0C0C0"/>
+    <rect x="6" y="13" width="40" height="10" fill="#E8303E" opacity="0.6"/>
+    <rect x="10" y="28" width="32" height="22" rx="2" fill="white" opacity="0.12"/>
+    <path d="M6 52 Q16 47 26 52 Q36 57 46 52" stroke="white" strokeWidth="1.5" fill="none" opacity="0.35"/>
+    <ellipse cx="26" cy="9" rx="5" ry="2.5" fill="#A8A8A8"/>
+    <rect x="23" y="7" width="6" height="3" rx="1" fill="#B5B5B5"/>
+  </svg>
+);
+
+const MoisturizerJar = () => (
+  <svg width="80" height="62" viewBox="0 0 80 62" fill="none">
+    <rect x="4" y="23" width="72" height="36" rx="7" fill="#003F8A"/>
+    <rect x="0" y="9" width="80" height="18" rx="10" fill="#0056B3"/>
+    <ellipse cx="40" cy="18" rx="32" ry="8" fill="#0065CC" opacity="0.45"/>
+    <rect x="12" y="29" width="56" height="22" rx="4" fill="white" opacity="0.12"/>
+    <rect x="20" y="35" width="40" height="4" rx="2" fill="white" opacity="0.28"/>
+    <rect x="25" y="43" width="30" height="3" rx="1" fill="white" opacity="0.18"/>
+  </svg>
+);
+
+const PumpBottle = () => (
+  <svg width="52" height="134" viewBox="0 0 52 134" fill="none">
+    <rect x="17" y="0" width="18" height="10" rx="5" fill="#E0E0E0"/>
+    <rect x="23" y="10" width="6" height="18" fill="#CCCCCC"/>
+    <rect x="18" y="22" width="16" height="12" rx="4" fill="#EBEBEB"/>
+    <rect x="6" y="32" width="40" height="94" rx="12" fill="#F2F2F2"/>
+    <rect x="9" y="52" width="34" height="55" rx="6" fill="white" opacity="0.85"/>
+    <rect x="14" y="62" width="24" height="4" rx="2" fill="#D0D0D0"/>
+    <rect x="14" y="70" width="18" height="2.5" rx="1" fill="#DEDEDE"/>
+    <rect x="14" y="76" width="20" height="2.5" rx="1" fill="#DEDEDE"/>
+    <ellipse cx="26" cy="126" rx="20" ry="5" fill="#DCDCDC" opacity="0.7"/>
+  </svg>
+);
+
+const WaterBottle = () => (
+  <svg width="46" height="124" viewBox="0 0 46 124" fill="none">
+    <rect x="15" y="0" width="16" height="14" rx="5" fill="#1565C0"/>
+    <rect x="17" y="13" width="12" height="14" rx="3" fill="#B3D9F5"/>
+    <rect x="5" y="25" width="36" height="94" rx="14" fill="#C9E8F7" opacity="0.85"/>
+    <rect x="5" y="55" width="36" height="64" rx="14" fill="#80C6E8" opacity="0.45"/>
+    <rect x="10" y="30" width="8" height="52" rx="4" fill="white" opacity="0.32"/>
+    <rect x="8" y="45" width="30" height="28" rx="3" fill="white" opacity="0.5"/>
+    <rect x="13" y="52" width="20" height="3" rx="1" fill="#90C8E8" opacity="0.6"/>
+    <rect x="15" y="59" width="16" height="2" rx="1" fill="#90C8E8" opacity="0.4"/>
+  </svg>
+);
+
+const SnackBar = () => (
+  <svg width="115" height="46" viewBox="0 0 115 46" fill="none">
+    <rect x="6" y="5" width="103" height="36" rx="7" fill="#8B4513"/>
+    <rect x="0" y="8" width="10" height="30" rx="5" fill="#A0522D"/>
+    <rect x="105" y="8" width="10" height="30" rx="5" fill="#A0522D"/>
+    <rect x="13" y="11" width="89" height="24" rx="4" fill="#7A3800" opacity="0.65"/>
+    <rect x="13" y="19" width="89" height="8" fill="#D4A017" opacity="0.45"/>
+    <rect x="22" y="14" width="44" height="4" rx="2" fill="white" opacity="0.35"/>
+    <rect x="22" y="22" width="30" height="3" rx="1" fill="white" opacity="0.2"/>
+  </svg>
+);
+
+const VitaminBottle = () => (
+  <svg width="58" height="82" viewBox="0 0 58 82" fill="none">
+    <rect x="9" y="0" width="40" height="20" rx="10" fill="#FF6B35"/>
+    <rect x="5" y="15" width="48" height="63" rx="9" fill="#FF8C5A"/>
+    <rect x="9" y="26" width="40" height="42" rx="6" fill="white" opacity="0.82"/>
+    <rect x="15" y="34" width="28" height="5" rx="2" fill="#FF6B35" opacity="0.65"/>
+    <rect x="18" y="43" width="22" height="3" rx="1" fill="#FFB085" opacity="0.6"/>
+    <rect x="16" y="50" width="26" height="2.5" rx="1" fill="#FFB085" opacity="0.45"/>
+    <rect x="16" y="56" width="20" height="2.5" rx="1" fill="#FFB085" opacity="0.4"/>
+    <ellipse cx="29" cy="78" rx="24" ry="5" fill="#E05A25" opacity="0.35"/>
+  </svg>
+);
+
+const KombuchaBottle = () => (
+  <svg width="42" height="122" viewBox="0 0 42 122" fill="none">
+    <rect x="14" y="0" width="14" height="13" rx="4" fill="#1B4332"/>
+    <rect x="16" y="11" width="10" height="16" rx="3" fill="#40916C"/>
+    <path d="M10 27 Q5 37 5 48 L5 102 Q5 112 21 112 Q37 112 37 102 L37 48 Q37 37 32 27 Z" fill="#52B788"/>
+    <rect x="5" y="48" width="32" height="54" rx="2" fill="#40916C"/>
+    <rect x="8" y="50" width="26" height="42" rx="4" fill="white" opacity="0.65"/>
+    <rect x="13" y="58" width="16" height="4" rx="2" fill="#1B4332" opacity="0.55"/>
+    <rect x="15" y="66" width="12" height="2.5" rx="1" fill="#52B788" opacity="0.5"/>
+    <rect x="13" y="72" width="16" height="2" rx="1" fill="#52B788" opacity="0.4"/>
+    <rect x="9" y="30" width="5" height="42" rx="2" fill="white" opacity="0.18"/>
+  </svg>
+);
+
+const FoilPouch = () => (
+  <svg width="72" height="92" viewBox="0 0 72 92" fill="none">
+    <rect x="5" y="10" width="62" height="72" rx="6" fill="#B8B8B8"/>
+    <rect x="5" y="10" width="20" height="72" rx="6" fill="white" opacity="0.14"/>
+    <rect x="3" y="7" width="66" height="9" rx="5" fill="#989898"/>
+    <rect x="3" y="76" width="66" height="9" rx="5" fill="#989898"/>
+    <rect x="13" y="26" width="46" height="36" rx="5" fill="white" opacity="0.18"/>
+    <rect x="20" y="35" width="32" height="4" rx="2" fill="white" opacity="0.28"/>
+    <rect x="24" y="44" width="24" height="3" rx="1" fill="white" opacity="0.18"/>
+    <rect x="5" y="22" width="8" height="52" rx="4" fill="white" opacity="0.1"/>
+  </svg>
+);
+
+const SerumDropper = () => (
+  <svg width="36" height="102" viewBox="0 0 36 102" fill="none">
+    <ellipse cx="18" cy="9" rx="11" ry="9" fill="#7B6040"/>
+    <rect x="15" y="16" width="6" height="10" fill="#6B5030"/>
+    <rect x="11" y="24" width="14" height="9" rx="3" fill="#5A4020"/>
+    <rect x="6" y="31" width="24" height="67" rx="9" fill="#C8966C" opacity="0.88"/>
+    <rect x="6" y="56" width="24" height="42" rx="9" fill="#D4A87A" opacity="0.6"/>
+    <rect x="8" y="37" width="20" height="38" rx="4" fill="white" opacity="0.55"/>
+    <rect x="11" y="44" width="14" height="3" rx="1" fill="#A07040" opacity="0.5"/>
+    <rect x="11" y="51" width="10" height="2" rx="1" fill="#A07040" opacity="0.35"/>
+    <rect x="9" y="33" width="5" height="36" rx="2" fill="white" opacity="0.22"/>
+  </svg>
+);
+
+const ChipsBag = () => (
+  <svg width="68" height="88" viewBox="0 0 68 88" fill="none">
+    <path d="M12 16 Q6 22 4 38 L4 66 Q6 80 16 84 L52 84 Q62 80 64 66 L64 38 Q62 22 56 16 Z" fill="#F5C518"/>
+    <rect x="13" y="12" width="42" height="7" rx="3" fill="#D4A800" opacity="0.65"/>
+    <rect x="11" y="78" width="46" height="7" rx="3" fill="#D4A800" opacity="0.65"/>
+    <rect x="12" y="30" width="44" height="36" rx="5" fill="white" opacity="0.22"/>
+    <ellipse cx="34" cy="46" rx="16" ry="10" fill="#CC8800" opacity="0.4"/>
+    <rect x="14" y="22" width="10" height="46" rx="5" fill="white" opacity="0.13"/>
+    <rect x="20" y="36" width="28" height="4" rx="2" fill="white" opacity="0.3"/>
+    <rect x="22" y="44" width="24" height="3" rx="1" fill="white" opacity="0.2"/>
+  </svg>
+);
+
+/* Positions: [tailwind classes, rotation, component] */
+const HERO_PRODUCTS = [
+  { cls: 'top-[13%] left-[7%]',   rot: '-22deg', El: SnackBar        },
+  { cls: 'top-[5%]  left-[30%]',  rot:  '6deg',  El: WaterBottle     },
+  { cls: 'top-[8%]  right-[30%]', rot: '-7deg',  El: FoilPouch       },
+  { cls: 'top-[8%]  right-[8%]',  rot: '16deg',  El: PumpBottle      },
+  { cls: 'top-[22%] right-[4%]',  rot: '-3deg',  El: VitaminBottle   },
+  { cls: 'top-[60%] left-[6%]',   rot:  '6deg',  El: FoilPouch       },
+  { cls: 'top-[68%] left-[15%]',  rot: '-9deg',  El: MoisturizerJar  },
+  { cls: 'top-[72%] left-[34%]',  rot: '-4deg',  El: SerumDropper    },
+  { cls: 'top-[76%] left-[48%]',  rot: '14deg',  El: SnackBar        },
+  { cls: 'top-[65%] right-[25%]', rot: '-11deg', El: KombuchaBottle  },
+  { cls: 'top-[18%] left-[13%]',  rot: '-14deg', El: SodaCan         },
+  { cls: 'top-[62%] right-[7%]',  rot:  '9deg',  El: ChipsBag        },
+];
 
 /* ─── "How it works" step card ─── */
 const HOW_STEPS = [
@@ -67,27 +209,12 @@ export default function Landing() {
       ══════════════════════════════════════ */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#EFEFEF]">
 
-        {/* Scattered product shapes */}
-        {/* Left column */}
-        <ProductShape className="w-10 h-32 rotate-[-22deg] top-[15%] left-[10%]" />
-        <ProductShape className="w-16 h-20 rotate-[12deg]  top-[55%] left-[7%]" />
-        <ProductShape className="w-12 h-24 rotate-[-8deg]  top-[68%] left-[14%]" />
-
-        {/* Center-left */}
-        <ProductShape className="w-14 h-44 rotate-[6deg]   top-[8%]  left-[30%]" />
-        <ProductShape className="w-8  h-20 rotate-[-5deg]  top-[72%] left-[33%]" />
-
-        {/* Center */}
-        <ProductShape className="w-10 h-14 rotate-[15deg]  top-[75%] left-[48%]" />
-
-        {/* Center-right */}
-        <ProductShape className="w-12 h-36 rotate-[5deg]   top-[6%]  right-[28%]" />
-        <ProductShape className="w-10 h-16 rotate-[-10deg] top-[60%] right-[26%]" />
-
-        {/* Right column */}
-        <ProductShape className="w-8  h-24 rotate-[18deg]  top-[12%] right-[10%]" />
-        <ProductShape className="w-14 h-44 rotate-[-4deg]  top-[22%] right-[6%]" />
-        <ProductShape className="w-12 h-20 rotate-[10deg]  top-[68%] right-[8%]" />
+        {/* Scattered product illustrations */}
+        {HERO_PRODUCTS.map(({ cls, rot, El }, i) => (
+          <div key={i} className={`absolute drop-shadow-md ${cls}`} style={{ transform: `rotate(${rot})` }}>
+            <El />
+          </div>
+        ))}
 
         {/* Headline content */}
         <div className="relative z-10 text-center px-6 max-w-3xl">
