@@ -29,6 +29,8 @@ router.post(
       } = req.body;
 
       const total_cost = (price_per_sample || 0) * sample_quantity;
+      // Coerce empty strings to null for DATE columns
+      const toDate = (v) => (v && v !== '') ? v : null;
 
       const result = await db.query(
         `INSERT INTO campaigns (brand_id, title, description, purpose,
@@ -40,11 +42,12 @@ router.post(
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
          RETURNING *`,
         [req.user.id, title, description, purpose,
-         target_age_min, target_age_max, target_gender, target_locations || [], target_categories || [],
+         target_age_min || null, target_age_max || null, target_gender,
+         target_locations || [], target_categories || [],
          product_name, product_description, product_images || [], sample_quantity,
          pickup_address, pickup_city, pickup_state, pickup_zip,
-         pickup_date, pickup_time_window, pickup_contact_name, pickup_contact_phone,
-         price_per_sample, total_cost, start_date, end_date]
+         toDate(pickup_date), pickup_time_window, pickup_contact_name, pickup_contact_phone,
+         price_per_sample, total_cost, toDate(start_date), toDate(end_date)]
       );
 
       res.status(201).json(result.rows[0]);
