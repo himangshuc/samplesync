@@ -2,16 +2,24 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
-import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight, ArrowRight } from 'lucide-react';
+import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight, ArrowRight, Check } from 'lucide-react';
+import { qState, BRANCH_META } from '../utils/questionnaireState';
 
 export default function UserDashboard() {
   const { user } = useAuth();
   const [samples, setSamples] = useState([]);
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [questionnaireDone] = useState(
-    () => localStorage.getItem('questionnaire_done') === 'true'
-  );
+  // Read questionnaire state once on mount (localStorage is synchronous)
+  const [qProgress] = useState(() => ({
+    introDone:       qState.isIntroDone(),
+    branchStatus:    qState.getBranchStatus(),
+    pendingBranches: qState.getPendingBranches(),
+    nextBranch:      qState.getNextBranch(),
+    allBranchesDone: qState.isAllBranchesDone(),
+    debriefDone:     qState.isDebriefDone(),
+    allDone:         qState.isAllDone(),
+  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,24 +64,114 @@ export default function UserDashboard() {
         <p className="text-gray-500 mt-1">Here's what's happening with your samples.</p>
       </div>
 
-      {/* Complete-profile CTA — shown until questionnaire is done */}
-      {!questionnaireDone && (
-        <div className="bg-navy-700 rounded-2xl p-6 mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <span className="text-lime-500 font-black text-3xl leading-none shrink-0">*</span>
-            <div>
-              <h2 className="font-bold text-xl text-white">Complete your profile</h2>
-              <p className="text-white/50 text-sm mt-0.5">
-                Help us match you with samples you'll actually love. Takes about 5 minutes.
-              </p>
+      {/* ── Questionnaire CTA section ── */}
+      {!qProgress.allDone && (
+        <div className="mb-10">
+          {/* Intro not yet done */}
+          {!qProgress.introDone && (
+            <div className="bg-navy-700 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+              <div className="flex items-center gap-4">
+                <span className="text-lime-500 font-black text-3xl leading-none shrink-0">*</span>
+                <div>
+                  <h2 className="font-bold text-xl text-white">Complete your profile</h2>
+                  <p className="text-white/50 text-sm mt-0.5">Help us match you with samples you'll actually love.</p>
+                </div>
+              </div>
+              <Link
+                to="/questionnaire"
+                className="shrink-0 inline-flex items-center gap-2 px-6 py-2.5 bg-lime-500 text-navy-700 font-bold rounded-full hover:bg-lime-400 transition-colors text-sm"
+              >
+                Start <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
-          </div>
-          <Link
-            to="/questionnaire"
-            className="shrink-0 inline-flex items-center gap-2 px-6 py-2.5 bg-lime-500 text-navy-700 font-bold rounded-full hover:bg-lime-400 transition-colors text-sm"
-          >
-            Start <ArrowRight className="w-4 h-4" />
-          </Link>
+          )}
+
+          {/* Intro done — show branch questionnaire cards */}
+          {qProgress.introDone && (
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="font-bold text-lg text-navy-700">Your Product Questionnaires</h2>
+                  <p className="text-navy-700/50 text-sm">Complete these to get perfectly matched samples.</p>
+                </div>
+                {qProgress.nextBranch && (
+                  <Link
+                    to={`/questionnaire/${qProgress.nextBranch}`}
+                    className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-navy-700 text-white text-sm font-bold rounded-full hover:bg-navy-600 transition-colors"
+                  >
+                    Take next <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                )}
+                {!qProgress.nextBranch && !qProgress.debriefDone && (
+                  <Link
+                    to="/questionnaire/debrief"
+                    className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-lime-500 text-navy-700 text-sm font-bold rounded-full hover:bg-lime-400 transition-colors"
+                  >
+                    Final Debrief <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                )}
+              </div>
+
+              {/* Branch cards grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {qProgress.branchStatus.map(({ branch, done }) => {
+                  const meta = BRANCH_META[branch];
+                  return (
+                    <div
+                      key={branch}
+                      className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-colors
+                        ${done ? 'border-lime-500 bg-lime-50' : 'border-gray-200 bg-gray-50'}`}
+                    >
+                      <span className="text-2xl shrink-0">{meta.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-navy-700 text-sm truncate">{meta.label}</p>
+                        <p className="text-navy-700/40 text-xs truncate">{meta.description}</p>
+                      </div>
+                      {done ? (
+                        <span className="w-6 h-6 rounded-full bg-lime-500 flex items-center justify-center shrink-0">
+                          <Check className="w-3.5 h-3.5 text-navy-700" />
+                        </span>
+                      ) : (
+                        <Link
+                          to={`/questionnaire/${branch}`}
+                          className="shrink-0 w-7 h-7 rounded-full bg-navy-700 flex items-center justify-center hover:bg-navy-600 transition-colors"
+                          aria-label={`Start ${meta.label}`}
+                        >
+                          <ArrowRight className="w-3.5 h-3.5 text-white" />
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Debrief card — unlocks when all branches done */}
+                {qProgress.allBranchesDone && (
+                  <div className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-colors
+                    ${qProgress.debriefDone ? 'border-lime-500 bg-lime-50' : 'border-navy-700/30 bg-navy-50'}`}
+                  >
+                    <span className="text-2xl shrink-0">{BRANCH_META.debrief.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-navy-700 text-sm truncate">{BRANCH_META.debrief.label}</p>
+                      <p className="text-navy-700/40 text-xs truncate">{BRANCH_META.debrief.description}</p>
+                    </div>
+                    {qProgress.debriefDone ? (
+                      <span className="w-6 h-6 rounded-full bg-lime-500 flex items-center justify-center shrink-0">
+                        <Check className="w-3.5 h-3.5 text-navy-700" />
+                      </span>
+                    ) : (
+                      <Link
+                        to="/questionnaire/debrief"
+                        className="shrink-0 w-7 h-7 rounded-full bg-navy-700 flex items-center justify-center hover:bg-navy-600 transition-colors"
+                        aria-label="Start Final Debrief"
+                      >
+                        <ArrowRight className="w-3.5 h-3.5 text-white" />
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

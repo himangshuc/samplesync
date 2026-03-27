@@ -1033,3 +1033,8 @@ export function getSubBranchQuestions(questionId, answer) {
 export function getQuestionById(id) {
   return QUESTIONS[id] ?? null;
 }
+
+/** Returns the base question IDs for a named branch (sub-branches injected dynamically). */
+export function getBranchFlow(branch) {
+  return BRANCH_BASE[branch] ?? [];
+}

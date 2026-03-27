@@ -38,6 +38,7 @@ function AppRoutes() {
       <Route path="/brand/campaigns/new" element={<ProtectedRoute requiredRole="brand"><NewCampaign /></ProtectedRoute>} />
 
       <Route path="/questionnaire" element={<ProtectedRoute requiredRole="user"><ProfileQuestionnaire /></ProtectedRoute>} />
+      <Route path="/questionnaire/:branch" element={<ProtectedRoute requiredRole="user"><ProfileQuestionnaire /></ProtectedRoute>} />
 
       <Route path="/contact" element={<Contact />} />
       <Route path="/blogs"   element={<Blogs />} />
