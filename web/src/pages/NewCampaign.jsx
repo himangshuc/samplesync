@@ -53,7 +53,7 @@ export default function NewCampaign() {
       {/* Progress */}
       <div className="flex gap-2 mb-8">
         {[1, 2, 3, 4].map((s) => (
-          <div key={s} className={`h-1 flex-1 rounded-full transition-colors ${s <= step ? 'bg-sage-600' : 'bg-gray-200'}`} />
+          <div key={s} className={`h-1 flex-1 rounded-full transition-colors ${s <= step ? 'bg-lime-500' : 'bg-gray-200'}`} />
         ))}
       </div>
 
@@ -77,7 +77,7 @@ export default function NewCampaign() {
               {PURPOSES.map((p) => (
                 <button key={p.value} type="button" onClick={() => update('purpose', p.value)}
                   className={`p-3 rounded-xl text-sm font-medium text-left border transition-all ${
-                    form.purpose === p.value ? 'bg-sage-600 text-white border-sage-600' : 'bg-white text-gray-600 border-gray-200 hover:border-sage-300'
+                    form.purpose === p.value ? 'bg-navy-700 text-white border-navy-700' : 'bg-white text-gray-600 border-gray-200 hover:border-navy-400'
                   }`}>
                   {p.label}
                 </button>
@@ -129,9 +129,9 @@ export default function NewCampaign() {
               <input type="number" step="0.01" className="input-field" value={form.price_per_sample} onChange={(e) => update('price_per_sample', parseFloat(e.target.value))} />
             </div>
           </div>
-          <div className="bg-sage-50 rounded-xl p-4 text-sm">
-            <span className="font-medium text-sage-700">Estimated Total: </span>
-            <span className="text-sage-900 font-semibold">${(form.sample_quantity * form.price_per_sample).toLocaleString()}</span>
+          <div className="bg-navy-700/5 rounded-xl p-4 text-sm">
+            <span className="font-medium text-navy-700">Estimated Total: </span>
+            <span className="text-navy-700 font-semibold">${(form.sample_quantity * form.price_per_sample).toLocaleString()}</span>
           </div>
         </div>
       )}
@@ -205,7 +205,7 @@ export default function NewCampaign() {
               <span className="text-gray-500">Product</span><span className="font-medium">{form.product_name}</span>
               <span className="text-gray-500">Purpose</span><span className="font-medium capitalize">{form.purpose.replace('_', ' ')}</span>
               <span className="text-gray-500">Samples</span><span className="font-medium">{form.sample_quantity}</span>
-              <span className="text-gray-500">Total Cost</span><span className="font-semibold text-sage-700">${(form.sample_quantity * form.price_per_sample).toLocaleString()}</span>
+              <span className="text-gray-500">Total Cost</span><span className="font-semibold text-navy-700">${(form.sample_quantity * form.price_per_sample).toLocaleString()}</span>
             </div>
           </div>
         </div>
