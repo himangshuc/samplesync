@@ -395,9 +395,12 @@ export default function ProfileQuestionnaire() {
               />
             </div>
           </div>
-          <span className="text-xs font-semibold text-navy-700/40 shrink-0 tabular-nums">
-            {maxProgress}%
-          </span>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="text-xs font-semibold text-navy-700/40 hover:text-navy-700 transition-colors shrink-0 whitespace-nowrap"
+          >
+            Take later
+          </button>
         </div>
       </div>
 
