@@ -9,6 +9,9 @@ export default function UserDashboard() {
   const [samples, setSamples] = useState([]);
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [questionnaireDone] = useState(
+    () => localStorage.getItem('questionnaire_done') === 'true'
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,10 +48,6 @@ export default function UserDashboard() {
       </div>
     );
   }
-
-  const [questionnaireDone] = useState(
-    () => localStorage.getItem('questionnaire_done') === 'true'
-  );
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
