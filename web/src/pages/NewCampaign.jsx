@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, ArrowRight, Check, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 
 const PURPOSES = [
-  { value: 'product_launch', label: 'Product Launch' },
-  { value: 'market_research', label: 'Market Research' },
-  { value: 'brand_awareness', label: 'Brand Awareness' },
+  { value: 'product_launch',     label: 'Product Launch' },
+  { value: 'market_research',    label: 'Market Research' },
+  { value: 'brand_awareness',    label: 'Brand Awareness' },
   { value: 'competitive_analysis', label: 'Competitive Analysis' },
-  { value: 'customer_feedback', label: 'Customer Feedback' },
+  { value: 'customer_feedback',  label: 'Customer Feedback' },
 ];
+
+const Req = () => <span className="text-red-500 ml-0.5">*</span>;
 
 export default function NewCampaign() {
   const navigate = useNavigate();
@@ -20,10 +22,11 @@ export default function NewCampaign() {
   const [form, setForm] = useState({
     title: '', description: '', purpose: '',
     target_age_min: 18, target_age_max: 65, target_gender: 'all', target_locations: [], target_categories: [],
-    product_name: '', product_description: '', sample_quantity: 100,
+    product_name: '', product_description: '', product_dimensions: '', product_weight: '',
+    sample_quantity: 100,
     pickup_address: '', pickup_city: '', pickup_state: '', pickup_zip: '',
     pickup_date: '', pickup_time_window: '', pickup_contact_name: '', pickup_contact_phone: '',
-    price_per_sample: 3.50, start_date: '', end_date: '',
+    start_date: '', end_date: '',
   });
 
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));
@@ -64,7 +67,7 @@ export default function NewCampaign() {
         <div className="space-y-5">
           <h2 className="font-display text-xl">Campaign Details</h2>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Campaign Title</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Campaign Title<Req /></label>
             <input className="input-field" placeholder="e.g. Summer Serum Launch" value={form.title} onChange={(e) => update('title', e.target.value)} />
           </div>
           <div>
@@ -72,7 +75,7 @@ export default function NewCampaign() {
             <textarea className="input-field min-h-[100px]" placeholder="Describe what this campaign is about..." value={form.description} onChange={(e) => update('description', e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">Sampling Purpose</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">Sampling Purpose<Req /></label>
             <div className="grid grid-cols-2 gap-2">
               {PURPOSES.map((p) => (
                 <button key={p.value} type="button" onClick={() => update('purpose', p.value)}
@@ -87,7 +90,7 @@ export default function NewCampaign() {
         </div>
       )}
 
-      {/* Step 2: Targeting */}
+      {/* Step 2: Product & Targeting */}
       {step === 2 && (
         <div className="space-y-5">
           <h2 className="font-display text-xl">Target Demographics</h2>
@@ -112,7 +115,7 @@ export default function NewCampaign() {
 
           <h2 className="font-display text-xl pt-4">Product Details</h2>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Product Name<Req /></label>
             <input className="input-field" value={form.product_name} onChange={(e) => update('product_name', e.target.value)} />
           </div>
           <div>
@@ -121,17 +124,17 @@ export default function NewCampaign() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sample Quantity</label>
-              <input type="number" min="1" className="input-field" value={form.sample_quantity} onChange={(e) => update('sample_quantity', parseInt(e.target.value))} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Dimensions<Req /></label>
+              <input className="input-field" placeholder="e.g. 10 × 5 × 3 cm" value={form.product_dimensions} onChange={(e) => update('product_dimensions', e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price per Sample ($)</label>
-              <input type="number" step="0.01" className="input-field" value={form.price_per_sample} onChange={(e) => update('price_per_sample', parseFloat(e.target.value))} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Weight<Req /></label>
+              <input className="input-field" placeholder="e.g. 250 g" value={form.product_weight} onChange={(e) => update('product_weight', e.target.value)} />
             </div>
           </div>
-          <div className="bg-navy-700/5 rounded-xl p-4 text-sm">
-            <span className="font-medium text-navy-700">Estimated Total: </span>
-            <span className="text-navy-700 font-semibold">${(form.sample_quantity * form.price_per_sample).toLocaleString()}</span>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Sample Quantity<Req /></label>
+            <input type="number" min="1" className="input-field" value={form.sample_quantity} onChange={(e) => update('sample_quantity', parseInt(e.target.value))} />
           </div>
         </div>
       )}
@@ -142,26 +145,26 @@ export default function NewCampaign() {
           <h2 className="font-display text-xl">Pickup Details</h2>
           <p className="text-sm text-gray-500">Where should we pick up the samples?</p>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Address<Req /></label>
             <input className="input-field" value={form.pickup_address} onChange={(e) => update('pickup_address', e.target.value)} />
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">City<Req /></label>
               <input className="input-field" value={form.pickup_city} onChange={(e) => update('pickup_city', e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">State<Req /></label>
               <input className="input-field" value={form.pickup_state} onChange={(e) => update('pickup_state', e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">ZIP</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">ZIP<Req /></label>
               <input className="input-field" value={form.pickup_zip} onChange={(e) => update('pickup_zip', e.target.value)} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Date<Req /></label>
               <input type="date" className="input-field" value={form.pickup_date} onChange={(e) => update('pickup_date', e.target.value)} />
             </div>
             <div>
@@ -171,11 +174,11 @@ export default function NewCampaign() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name<Req /></label>
               <input className="input-field" value={form.pickup_contact_name} onChange={(e) => update('pickup_contact_name', e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Phone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Phone<Req /></label>
               <input className="input-field" value={form.pickup_contact_phone} onChange={(e) => update('pickup_contact_phone', e.target.value)} />
             </div>
           </div>
@@ -188,11 +191,11 @@ export default function NewCampaign() {
           <h2 className="font-display text-xl">Campaign Timeline</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date<Req /></label>
               <input type="date" className="input-field" value={form.start_date} onChange={(e) => update('start_date', e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">End Date<Req /></label>
               <input type="date" className="input-field" value={form.end_date} onChange={(e) => update('end_date', e.target.value)} />
             </div>
           </div>
@@ -205,7 +208,8 @@ export default function NewCampaign() {
               <span className="text-gray-500">Product</span><span className="font-medium">{form.product_name}</span>
               <span className="text-gray-500">Purpose</span><span className="font-medium capitalize">{form.purpose.replace('_', ' ')}</span>
               <span className="text-gray-500">Samples</span><span className="font-medium">{form.sample_quantity}</span>
-              <span className="text-gray-500">Total Cost</span><span className="font-semibold text-navy-700">${(form.sample_quantity * form.price_per_sample).toLocaleString()}</span>
+              <span className="text-gray-500">Dimensions</span><span className="font-medium">{form.product_dimensions || '—'}</span>
+              <span className="text-gray-500">Weight</span><span className="font-medium">{form.product_weight || '—'}</span>
             </div>
           </div>
         </div>

@@ -2,11 +2,37 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
-import { Package, ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { Package, ArrowRight, ArrowLeft, Check, Eye, EyeOff } from 'lucide-react';
 
 const CATEGORIES = ['Skincare', 'Haircare', 'Snacks', 'Beverages', 'Wellness', 'Tech', 'Pet Products', 'Home & Kitchen', 'Baby & Kids', 'Fitness'];
 const DIETARY = ['None', 'Gluten-free', 'Vegan', 'Vegetarian', 'Dairy-free', 'Nut-free', 'Keto', 'Halal', 'Kosher'];
-const PURPOSES = ['product_launch', 'market_research', 'brand_awareness', 'competitive_analysis', 'customer_feedback'];
+
+const Req = () => <span className="text-red-500 ml-0.5">*</span>;
+
+function PasswordInput({ value, onChange, placeholder }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative">
+      <input
+        type={show ? 'text' : 'password'}
+        className="input-field pr-10"
+        placeholder={placeholder || 'At least 8 characters'}
+        value={value}
+        onChange={onChange}
+        required
+      />
+      <button
+        type="button"
+        onClick={() => setShow((s) => !s)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        tabIndex={-1}
+        aria-label={show ? 'Hide password' : 'Show password'}
+      >
+        {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    </div>
+  );
+}
 
 export default function Signup() {
   const [searchParams] = useSearchParams();
@@ -32,7 +58,7 @@ export default function Signup() {
     website: '', industry: '', company_size: '', description: '',
   });
 
-  const updateUser = (key, val) => setUserForm((p) => ({ ...p, [key]: val }));
+  const updateUser  = (key, val) => setUserForm((p) => ({ ...p, [key]: val }));
   const updateBrand = (key, val) => setBrandForm((p) => ({ ...p, [key]: val }));
 
   const toggleArray = (key, val) => {
@@ -103,21 +129,21 @@ export default function Signup() {
                 <h2 className="font-display text-xl mb-2">Your Details</h2>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name<Req /></label>
                     <input className="input-field" value={userForm.first_name} onChange={(e) => updateUser('first_name', e.target.value)} required />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name<Req /></label>
                     <input className="input-field" value={userForm.last_name} onChange={(e) => updateUser('last_name', e.target.value)} required />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email<Req /></label>
                   <input type="email" className="input-field" value={userForm.email} onChange={(e) => updateUser('email', e.target.value)} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input type="password" className="input-field" placeholder="At least 8 characters" value={userForm.password} onChange={(e) => updateUser('password', e.target.value)} required />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Password<Req /></label>
+                  <PasswordInput value={userForm.password} onChange={(e) => updateUser('password', e.target.value)} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -192,7 +218,7 @@ export default function Signup() {
               <div className="space-y-4">
                 <h2 className="font-display text-xl mb-2">Delivery Address</h2>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 1<Req /></label>
                   <input className="input-field" placeholder="123 Main St" value={userForm.address_line1} onChange={(e) => updateUser('address_line1', e.target.value)} />
                 </div>
                 <div>
@@ -201,15 +227,15 @@ export default function Signup() {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">City<Req /></label>
                     <input className="input-field" value={userForm.city} onChange={(e) => updateUser('city', e.target.value)} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">State<Req /></label>
                     <input className="input-field" value={userForm.state} onChange={(e) => updateUser('state', e.target.value)} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ZIP</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">ZIP<Req /></label>
                     <input className="input-field" value={userForm.zip_code} onChange={(e) => updateUser('zip_code', e.target.value)} />
                   </div>
                 </div>
@@ -225,20 +251,20 @@ export default function Signup() {
               <div className="space-y-4">
                 <h2 className="font-display text-xl mb-2">Company Details</h2>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Company Name<Req /></label>
                   <input className="input-field" value={brandForm.company_name} onChange={(e) => updateBrand('company_name', e.target.value)} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name<Req /></label>
                   <input className="input-field" value={brandForm.contact_name} onChange={(e) => updateBrand('contact_name', e.target.value)} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email<Req /></label>
                   <input type="email" className="input-field" value={brandForm.email} onChange={(e) => updateBrand('email', e.target.value)} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input type="password" className="input-field" placeholder="At least 8 characters" value={brandForm.password} onChange={(e) => updateBrand('password', e.target.value)} required />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Password<Req /></label>
+                  <PasswordInput value={brandForm.password} onChange={(e) => updateBrand('password', e.target.value)} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
@@ -255,7 +281,7 @@ export default function Signup() {
                   <input className="input-field" placeholder="https://..." value={brandForm.website} onChange={(e) => updateBrand('website', e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Industry<Req /></label>
                   <select className="input-field" value={brandForm.industry} onChange={(e) => updateBrand('industry', e.target.value)}>
                     <option value="">Select industry</option>
                     {['Beauty & Skincare', 'Food & Beverage', 'Health & Wellness', 'Pet Products', 'Home & Kitchen', 'Tech & Electronics', 'Baby & Kids', 'Fitness', 'Other'].map((ind) => (

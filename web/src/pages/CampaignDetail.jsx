@@ -112,8 +112,10 @@ export default function CampaignDetail() {
 
         {/* Product */}
         <Section title="Product" icon={Tag}>
-          <Field label="Product Name" value={campaign.product_name} />
+          <Field label="Product Name"        value={campaign.product_name} />
           <Field label="Product Description" value={campaign.product_description} />
+          <Field label="Dimensions"          value={campaign.product_dimensions} />
+          <Field label="Weight"              value={campaign.product_weight} />
         </Section>
 
         {/* Target Audience */}
