@@ -279,9 +279,9 @@ export default function Landing() {
                       <h3 className="text-2xl font-bold text-white mb-1">{step.label}</h3>
                       <p className="text-white/60 text-xs leading-snug">{step.sub}</p>
                     </div>
-                    <div className="w-9 h-9 rounded-full border-2 border-white/30 flex items-center justify-center shrink-0 ml-3">
+                    <Link to="/signup" className="w-9 h-9 rounded-full border-2 border-white/30 flex items-center justify-center shrink-0 ml-3 hover:bg-white/10 transition-colors">
                       <ArrowRight className="w-4 h-4 text-white" />
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </div>
