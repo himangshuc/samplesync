@@ -21,58 +21,58 @@ function getAge(dob) {
   return Math.floor(diff / (365.25 * 24 * 3600 * 1000));
 }
 
-// Score a user against a campaign (0–100)
+// Score a user against a campaign (0–100).
+// Explicit criteria are HARD filters — failing any returns 0 (excluded).
+// Score reflects match quality among users who pass all filters.
 function scoreUser(user, campaign) {
-  let score = 0;
 
-  // 1. Gender (25 pts)
+  // ── Hard filter: gender ────────────────────────────────────────────────────
   const tg = campaign.target_gender;
-  if (!tg || tg === 'all') score += 25;
-  else if (user.gender && user.gender.toLowerCase() === tg.toLowerCase()) score += 25;
+  if (tg && tg !== 'all') {
+    if (!user.gender || user.gender.toLowerCase() !== tg.toLowerCase()) return 0;
+  }
 
-  // 2. Age (25 pts)
+  // ── Hard filter: age ───────────────────────────────────────────────────────
   const ageMin = campaign.target_age_min;
   const ageMax = campaign.target_age_max;
-  if (!ageMin && !ageMax) {
-    score += 25;
-  } else if (user.date_of_birth) {
+  if (ageMin || ageMax) {
+    if (!user.date_of_birth) return 0;
     const age = getAge(user.date_of_birth);
-    if ((!ageMin || age >= ageMin) && (!ageMax || age <= ageMax)) score += 25;
+    if (ageMin && age < ageMin) return 0;
+    if (ageMax && age > ageMax) return 0;
   }
 
-  // 3. Location (25 pts)
+  // ── Hard filter: location ──────────────────────────────────────────────────
   const targetLocs = (campaign.target_locations || []).map(l => l.toLowerCase().trim());
-  if (!targetLocs.length) {
-    score += 25;
-  } else {
+  if (targetLocs.length) {
     const userLocs = [user.city, user.state].filter(Boolean).map(s => s.toLowerCase().trim());
-    if (targetLocs.some(tl => userLocs.some(ul => ul.includes(tl) || tl.includes(ul)))) {
-      score += 25;
-    }
+    const locMatch = targetLocs.some(tl => userLocs.some(ul => ul.includes(tl) || tl.includes(ul)));
+    if (!locMatch) return 0;
   }
 
-  // 4. Product category / questionnaire branch (25 pts)
+  // ── Hard filter: product category ─────────────────────────────────────────
   const targetCats = campaign.target_categories || [];
-  if (!targetCats.length) {
-    score += 25;
-  } else {
+  if (targetCats.length) {
     const qAnswers = (user.questionnaire_data?.answers) || {};
     const answerKeys = Object.keys(qAnswers);
-
-    // Check questionnaire branch answers
     const hasQBranchMatch = targetCats.some(cat => {
       const prefixes = CATEGORY_BRANCH_PREFIXES[cat] || [];
       return prefixes.some(prefix => answerKeys.some(k => k.startsWith(prefix)));
     });
-
-    // Also check user's product_categories field set at signup
-    const userCats = (user.product_categories || []).map(c => c.toLowerCase().replace(/\s+/g, '_'));
+    const userCats = (user.product_categories || []).map(c => c.toLowerCase().replace(/[\s-]+/g, '_'));
     const hasCatOverlap = targetCats.some(tc => userCats.includes(tc));
-
-    if (hasQBranchMatch || hasCatOverlap) score += 25;
+    if (!hasQBranchMatch && !hasCatOverlap) return 0;
   }
 
-  return score;
+  // ── Scoring: quality among qualified samplers (50–100) ────────────────────
+  // Everyone who passes all hard filters starts at 50.
+  // Bonus points reward profile completeness and engagement.
+  let score = 50;
+  if (user.questionnaire_completed)             score += 25; // completed full questionnaire
+  if ((user.product_categories || []).length)   score += 15; // set product preferences at signup
+  if (user.gender)                              score +=  5; // has gender set (better targeting)
+  if (user.date_of_birth)                       score +=  5; // has age set
+  return Math.min(score, 100);
 }
 
 // ─── PREVIEW CANDIDATES ───────────────────────────────────────────────────────

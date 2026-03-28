@@ -186,8 +186,30 @@ export default function CampaignDetail() {
         <Section title="Target Audience" icon={Target}>
           <Field label="Age Range" value={campaign.target_age_min || campaign.target_age_max ? `${campaign.target_age_min ?? '—'} – ${campaign.target_age_max ?? '—'}` : null} />
           <Field label="Gender" value={campaign.target_gender} />
-          <Field label="Locations" value={campaign.target_locations?.length ? campaign.target_locations.join(', ') : null} />
-          <Field label="Categories" value={campaign.target_categories?.length ? campaign.target_categories.join(', ') : null} />
+          <div className="sm:col-span-2">
+            <dt className="text-xs font-semibold text-navy-700/40 uppercase tracking-widest mb-2">Target States</dt>
+            {campaign.target_locations?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {campaign.target_locations.map(loc => (
+                  <span key={loc} className="inline-flex px-3 py-1 bg-navy-700/8 text-navy-700 text-xs font-semibold rounded-full border border-navy-700/20">{loc}</span>
+                ))}
+              </div>
+            ) : (
+              <dd className="text-sm text-navy-700/40 italic">All India</dd>
+            )}
+          </div>
+          <div className="sm:col-span-2">
+            <dt className="text-xs font-semibold text-navy-700/40 uppercase tracking-widest mb-2">Product Categories</dt>
+            {campaign.target_categories?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {campaign.target_categories.map(cat => (
+                  <span key={cat} className="inline-flex px-3 py-1 bg-lime-50 text-lime-700 text-xs font-semibold rounded-full border border-lime-200">{cat.replace(/_/g, ' ')}</span>
+                ))}
+              </div>
+            ) : (
+              <dd className="text-sm text-navy-700/40 italic">All categories</dd>
+            )}
+          </div>
         </Section>
 
         {/* Schedule */}
