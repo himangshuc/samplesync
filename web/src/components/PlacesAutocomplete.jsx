@@ -83,7 +83,8 @@ export default function PlacesAutocomplete({ value, onChange, onSelect, placehol
         if (!place.address_components) return;
         const parsed = parseComponents(place.address_components);
         onSelect?.(parsed);
-        onChange?.(place.formatted_address);
+        // Show only the street part in the input, not the full formatted address
+        onChange?.(parsed.address_line1);
       });
     } catch (e) {
       console.error('Autocomplete init failed:', e);
