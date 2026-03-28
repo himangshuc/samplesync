@@ -234,7 +234,7 @@ router.post('/webhook/:secret', async (req, res) => {
   }
 
   const { awb, current_status, delivered_date } = req.body;
-  if (!awb) return res.status(400).json({ error: 'Missing AWB.' });
+  if (!awb) return res.json({ received: true, note: 'no awb, ignoring' });
 
   try {
     // Always update tracking status
