@@ -228,60 +228,62 @@ router.post('/cancel/:assignmentId', authenticate, requireRole('brand'), async (
 
 // ─── SHIPROCKET WEBHOOK ───────────────────────────────────────────────────────
 // POST /api/shipments/webhook/:secret  (public — no JWT)
-router.post('/webhook/:secret', async (req, res) => {
+router.post('/webhook/:secret', (req, res) => {
   if (req.params.secret !== process.env.SHIPROCKET_WEBHOOK_SECRET) {
     return res.status(403).json({ error: 'Forbidden.' });
   }
 
-  const { awb, current_status, delivered_date } = req.body;
-  if (!awb) return res.json({ received: true, note: 'no awb, ignoring' });
+  // Respond immediately so Shiprocket never times out
+  res.json({ received: true });
 
-  try {
-    // Always update tracking status
-    await db.query(
-      `UPDATE sample_assignments
-         SET last_tracking_status = $1, last_tracking_updated = NOW()
-       WHERE awb_code = $2`,
-      [current_status, awb],
-    );
+  // Process asynchronously after response
+  const { awb, current_status } = req.body || {};
+  if (!awb) return;
 
-    const status = (current_status || '').toLowerCase();
-
-    if (status.includes('delivered')) {
-      const updated = await db.query(
-        `UPDATE sample_assignments
-           SET status = 'delivered', delivered_at = NOW(),
-               feedback_due_at = NOW() + INTERVAL '${process.env.FEEDBACK_WINDOW_DAYS || 3} days'
-         WHERE awb_code = $1
-         RETURNING user_id, campaign_id`,
-        [awb],
-      );
-      if (updated.rows.length) {
-        const { user_id, campaign_id } = updated.rows[0];
-        const [userRow, campaignRow] = await Promise.all([
-          db.query('SELECT first_name, last_name, email FROM users WHERE id = $1', [user_id]),
-          db.query('SELECT product_name FROM campaigns WHERE id = $1', [campaign_id]),
-        ]);
-        const feedbackDue = new Date(Date.now() + (Number(process.env.FEEDBACK_WINDOW_DAYS || 3)) * 86400000);
-        notifications.notifyDelivered({
-          sampler:       userRow.rows[0],
-          productName:   campaignRow.rows[0]?.product_name,
-          feedbackDueAt: feedbackDue.toLocaleDateString(),
-        }).catch(console.error);
-      }
-    } else if (status.includes('shipped') || status.includes('in transit') || status.includes('picked up')) {
+  (async () => {
+    try {
       await db.query(
-        `UPDATE sample_assignments SET status = 'shipped', shipped_at = COALESCE(shipped_at, NOW())
-         WHERE awb_code = $1 AND status = 'assigned'`,
-        [awb],
+        `UPDATE sample_assignments
+           SET last_tracking_status = $1, last_tracking_updated = NOW()
+         WHERE awb_code = $2`,
+        [current_status, awb],
       );
-    }
 
-    res.json({ received: true });
-  } catch (err) {
-    console.error('Webhook processing error:', err);
-    res.status(500).json({ error: 'Webhook processing failed.' });
-  }
+      const status = (current_status || '').toLowerCase();
+
+      if (status.includes('delivered')) {
+        const updated = await db.query(
+          `UPDATE sample_assignments
+             SET status = 'delivered', delivered_at = NOW(),
+                 feedback_due_at = NOW() + INTERVAL '${process.env.FEEDBACK_WINDOW_DAYS || 3} days'
+           WHERE awb_code = $1
+           RETURNING user_id, campaign_id`,
+          [awb],
+        );
+        if (updated.rows.length) {
+          const { user_id, campaign_id } = updated.rows[0];
+          const [userRow, campaignRow] = await Promise.all([
+            db.query('SELECT first_name, last_name, email FROM users WHERE id = $1', [user_id]),
+            db.query('SELECT product_name FROM campaigns WHERE id = $1', [campaign_id]),
+          ]);
+          const feedbackDue = new Date(Date.now() + (Number(process.env.FEEDBACK_WINDOW_DAYS || 3)) * 86400000);
+          notifications.notifyDelivered({
+            sampler:       userRow.rows[0],
+            productName:   campaignRow.rows[0]?.product_name,
+            feedbackDueAt: feedbackDue.toLocaleDateString(),
+          }).catch(console.error);
+        }
+      } else if (status.includes('shipped') || status.includes('in transit') || status.includes('picked up')) {
+        await db.query(
+          `UPDATE sample_assignments SET status = 'shipped', shipped_at = COALESCE(shipped_at, NOW())
+           WHERE awb_code = $1 AND status = 'assigned'`,
+          [awb],
+        );
+      }
+    } catch (err) {
+      console.error('Webhook processing error:', err);
+    }
+  })();
 });
 
 module.exports = router;
