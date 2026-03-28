@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, Package, Users, MapPin, Calendar, DollarSign, Tag, Target, Truck, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, Package, Users, MapPin, Calendar, DollarSign, Tag, Target, Truck, ExternalLink, Loader2, Zap, CheckCircle } from 'lucide-react';
 
 function displayStatus(c) {
   if (c.campaign_status === 'completed') return 'completed';
@@ -50,7 +50,10 @@ export default function CampaignDetail() {
   const [assignments, setAssignments] = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [error,       setError]       = useState('');
-  const [shipLoading, setShipLoading] = useState({}); // keyed by assignment id
+  const [shipLoading,    setShipLoading]    = useState({}); // keyed by assignment id
+  const [candidates,     setCandidates]     = useState(null); // null = not previewed
+  const [matchLoading,   setMatchLoading]   = useState(false);
+  const [matchResult,    setMatchResult]    = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -61,6 +64,36 @@ export default function CampaignDetail() {
       setAssignments(assignRes.data);
     }).catch(() => setError('Campaign not found.')).finally(() => setLoading(false));
   }, [id]);
+
+  const handlePreviewCandidates = async () => {
+    setMatchLoading(true);
+    setError('');
+    try {
+      const { data } = await api.get(`/matching/candidates/${id}`);
+      setCandidates(data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to fetch candidates.');
+    } finally {
+      setMatchLoading(false);
+    }
+  };
+
+  const handleRunMatching = async () => {
+    setMatchLoading(true);
+    setError('');
+    try {
+      const { data } = await api.post(`/matching/run/${id}`);
+      setMatchResult(data);
+      // Reload assignments
+      const assignRes = await api.get(`/shipments/campaign/${id}`).catch(() => ({ data: [] }));
+      setAssignments(assignRes.data);
+      setCandidates(null);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to run matching.');
+    } finally {
+      setMatchLoading(false);
+    }
+  };
 
   const handleCreateShipment = async (assignmentId) => {
     setShipLoading(p => ({ ...p, [assignmentId]: 'create' }));
@@ -182,6 +215,75 @@ export default function CampaignDetail() {
           <Field label="Total Cost"     value={totalCost ? `$${totalCost.toLocaleString()}` : null} />
           <Field label="Payment Status" value={campaign.payment_status} />
         </Section>
+
+        {/* ── Sampler Matching ── */}
+        {assignments.length < campaign.sample_quantity && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-5">
+              <Zap className="w-4 h-4 text-navy-700/40" />
+              <h2 className="font-bold text-navy-700 text-sm uppercase tracking-widest">Sampler Matching</h2>
+            </div>
+
+            {matchResult ? (
+              <div className="flex items-center gap-3 p-4 bg-lime-50 rounded-xl border border-lime-200">
+                <CheckCircle className="w-5 h-5 text-lime-600 shrink-0" />
+                <p className="text-sm font-medium text-lime-800">
+                  Matched {matchResult.matched} sampler{matchResult.matched !== 1 ? 's' : ''} successfully.
+                </p>
+              </div>
+            ) : candidates ? (
+              <div>
+                <p className="text-sm text-navy-700/60 mb-4">
+                  Found <span className="font-bold text-navy-700">{candidates.candidates.length}</span> eligible samplers
+                  out of {candidates.total_eligible} total.
+                  {candidates.slots_remaining > 0 && ` ${candidates.slots_remaining} slot${candidates.slots_remaining !== 1 ? 's' : ''} remaining.`}
+                </p>
+                {candidates.candidates.length > 0 && (
+                  <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
+                    {candidates.candidates.map((c) => (
+                      <div key={c.id} className="flex items-center justify-between text-sm px-3 py-2 rounded-lg bg-gray-50">
+                        <span className="font-medium text-navy-700">{c.name}</span>
+                        <div className="flex items-center gap-3 text-navy-700/50">
+                          <span>{c.city}, {c.state}</span>
+                          <span className="font-bold text-lime-600">{c.score}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleRunMatching}
+                    disabled={matchLoading || candidates.candidates.length === 0}
+                    className="inline-flex items-center gap-2 px-5 py-2 bg-navy-700 text-white text-sm font-bold rounded-full hover:bg-navy-600 transition-colors disabled:opacity-40"
+                  >
+                    {matchLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+                    Assign {candidates.candidates.length} Samplers
+                  </button>
+                  <button onClick={() => setCandidates(null)} className="text-sm text-gray-400 hover:text-gray-600">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-navy-700/50">
+                  {assignments.length > 0
+                    ? `${assignments.length} of ${campaign.sample_quantity} slots filled.`
+                    : 'No samplers assigned yet. Run matching to find the best fit.'}
+                </p>
+                <button
+                  onClick={handlePreviewCandidates}
+                  disabled={matchLoading}
+                  className="inline-flex items-center gap-2 px-5 py-2 bg-navy-700 text-white text-sm font-bold rounded-full hover:bg-navy-600 transition-colors disabled:opacity-40"
+                >
+                  {matchLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+                  Preview Matches
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Sampler Assignments & Shipments */}
         {assignments.length > 0 && (

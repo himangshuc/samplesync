@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
-import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight, ArrowRight, Check, Truck, ExternalLink } from 'lucide-react';
+import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight, ArrowRight, Check, Truck, ExternalLink, Zap } from 'lucide-react';
 import { qState, BRANCH_META } from '../utils/questionnaireState';
 
 export default function UserDashboard() {
@@ -207,6 +207,20 @@ export default function UserDashboard() {
         ))}
       </div>
 
+      {/* Newly matched alert */}
+      {samples.some(s => s.status === 'assigned') && (
+        <div className="bg-navy-700 rounded-2xl p-6 mb-10">
+          <h2 className="font-display text-xl text-white mb-1 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-lime-400" />
+            You've been matched!
+          </h2>
+          <p className="text-white/60 text-sm">
+            You've been selected for {samples.filter(s => s.status === 'assigned').length} new sample{samples.filter(s => s.status === 'assigned').length !== 1 ? 's' : ''}.
+            Your package will be shipped soon — stay tuned.
+          </p>
+        </div>
+      )}
+
       {/* Pending feedback alert */}
       {pending.length > 0 && (
         <div className="bg-brand-50 border border-brand-200 rounded-2xl p-6 mb-10">
@@ -265,9 +279,10 @@ export default function UserDashboard() {
                       s.status === 'feedback_received' ? 'bg-lime-100 text-lime-700' :
                       s.status === 'delivered'         ? 'bg-blue-100 text-blue-700' :
                       s.status === 'shipped'           ? 'bg-blue-50 text-blue-600' :
+                      s.status === 'assigned'          ? 'bg-navy-700/10 text-navy-700' :
                       'bg-gray-100 text-gray-600'
                     }`}>
-                      {s.status.replace('_', ' ')}
+                      {s.status === 'assigned' ? 'matched' : s.status.replace('_', ' ')}
                     </span>
                     <div className="text-xs text-gray-400 mt-1">
                       {new Date(s.assigned_at).toLocaleDateString()}

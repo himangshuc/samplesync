@@ -5,11 +5,22 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import PlacesAutocomplete from '../components/PlacesAutocomplete';
 
 const PURPOSES = [
-  { value: 'product_launch',     label: 'Product Launch' },
-  { value: 'market_research',    label: 'Market Research' },
-  { value: 'brand_awareness',    label: 'Brand Awareness' },
+  { value: 'product_launch',       label: 'Product Launch' },
+  { value: 'market_research',      label: 'Market Research' },
+  { value: 'brand_awareness',      label: 'Brand Awareness' },
   { value: 'competitive_analysis', label: 'Competitive Analysis' },
-  { value: 'customer_feedback',  label: 'Customer Feedback' },
+  { value: 'customer_feedback',    label: 'Customer Feedback' },
+];
+
+const PRODUCT_CATEGORIES = [
+  { value: 'food_beverage',   label: 'Food & Beverage',      emoji: '🍳' },
+  { value: 'snacks_drinks',   label: 'Snacks & Drinks',      emoji: '🥤' },
+  { value: 'beauty_skincare', label: 'Beauty & Skincare',    emoji: '🧴' },
+  { value: 'health_wellness', label: 'Health & Wellness',    emoji: '💊' },
+  { value: 'home_lifestyle',  label: 'Home & Lifestyle',     emoji: '🛋️' },
+  { value: 'tech_gadgets',    label: 'Tech & Gadgets',       emoji: '📱' },
+  { value: 'fashion_apparel', label: 'Fashion & Apparel',    emoji: '👔' },
+  { value: 'pet_care',        label: 'Pet Care',             emoji: '🐾' },
 ];
 
 const Req = () => <span className="text-red-500 ml-0.5">*</span>;
@@ -30,7 +41,27 @@ export default function NewCampaign() {
     start_date: '', end_date: '',
   });
 
+  const [locationInput, setLocationInput] = useState('');
+
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));
+
+  const toggleCategory = (val) => setForm((p) => ({
+    ...p,
+    target_categories: p.target_categories.includes(val)
+      ? p.target_categories.filter(c => c !== val)
+      : [...p.target_categories, val],
+  }));
+
+  const addLocation = (e) => {
+    if (e.key === 'Enter' && locationInput.trim()) {
+      e.preventDefault();
+      const loc = locationInput.trim();
+      if (!form.target_locations.includes(loc)) {
+        update('target_locations', [...form.target_locations, loc]);
+      }
+      setLocationInput('');
+    }
+  };
 
   const handleSubmit = async () => {
     setError('');
@@ -112,6 +143,46 @@ export default function NewCampaign() {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
+          </div>
+
+          {/* Product Categories */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Product Categories<Req /></label>
+            <p className="text-xs text-gray-400 mb-3">Used to match samplers who have completed relevant questionnaire branches.</p>
+            <div className="grid grid-cols-2 gap-2">
+              {PRODUCT_CATEGORIES.map((c) => (
+                <button key={c.value} type="button" onClick={() => toggleCategory(c.value)}
+                  className={`flex items-center gap-2 p-3 rounded-xl text-sm font-medium text-left border transition-all ${
+                    form.target_categories.includes(c.value)
+                      ? 'bg-navy-700 text-white border-navy-700'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-navy-400'
+                  }`}>
+                  <span>{c.emoji}</span>{c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Target States */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Target States / Regions</label>
+            <p className="text-xs text-gray-400 mb-2">Type a state name and press Enter to add. Leave blank to target all of India.</p>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {form.target_locations.map((loc) => (
+                <span key={loc} className="inline-flex items-center gap-1 px-3 py-1 bg-navy-700/10 text-navy-700 text-sm rounded-full font-medium">
+                  {loc}
+                  <button type="button" onClick={() => update('target_locations', form.target_locations.filter(l => l !== loc))}
+                    className="text-navy-700/50 hover:text-navy-700 ml-0.5">×</button>
+                </span>
+              ))}
+            </div>
+            <input
+              className="input-field"
+              placeholder="e.g. Maharashtra, Karnataka…"
+              value={locationInput}
+              onChange={(e) => setLocationInput(e.target.value)}
+              onKeyDown={addLocation}
+            />
           </div>
 
           <h2 className="font-display text-xl pt-4">Product Details</h2>
