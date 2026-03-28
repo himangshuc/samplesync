@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
-import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight, ArrowRight, Check } from 'lucide-react';
+import { Package, Clock, CheckCircle, AlertCircle, Star, ChevronRight, ArrowRight, Check, Truck, ExternalLink } from 'lucide-react';
 import { qState, BRANCH_META } from '../utils/questionnaireState';
 
 export default function UserDashboard() {
@@ -246,24 +246,38 @@ export default function UserDashboard() {
         ) : (
           <div className="space-y-3">
             {samples.map((s) => (
-              <div key={s.id} className="card p-5 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  {statusIcon(s.status)}
-                  <div>
-                    <div className="font-medium text-gray-900">{s.product_name}</div>
-                    <div className="text-sm text-gray-500">{s.company_name} · {s.campaign_title}</div>
+              <div key={s.id} className="card p-5">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    {statusIcon(s.status)}
+                    <div>
+                      <div className="font-medium text-gray-900">{s.product_name}</div>
+                      <div className="text-sm text-gray-500">{s.company_name} · {s.campaign_title}</div>
+                      {s.last_tracking_status && (
+                        <div className="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                          <Truck className="w-3 h-3" /> {s.last_tracking_status}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                    s.status === 'feedback_received' ? 'bg-sage-100 text-sage-700' :
-                    s.status === 'delivered' ? 'bg-brand-100 text-brand-700' :
-                    'bg-gray-100 text-gray-600'
-                  }`}>
-                    {s.status.replace('_', ' ')}
-                  </span>
-                  <div className="text-xs text-gray-400 mt-1">
-                    {new Date(s.assigned_at).toLocaleDateString()}
+                  <div className="text-right shrink-0">
+                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
+                      s.status === 'feedback_received' ? 'bg-lime-100 text-lime-700' :
+                      s.status === 'delivered'         ? 'bg-blue-100 text-blue-700' :
+                      s.status === 'shipped'           ? 'bg-blue-50 text-blue-600' :
+                      'bg-gray-100 text-gray-600'
+                    }`}>
+                      {s.status.replace('_', ' ')}
+                    </span>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {new Date(s.assigned_at).toLocaleDateString()}
+                    </div>
+                    {s.tracking_url && s.status === 'shipped' && (
+                      <a href={s.tracking_url} target="_blank" rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-navy-700 font-semibold hover:text-lime-600 mt-1">
+                        Track package <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

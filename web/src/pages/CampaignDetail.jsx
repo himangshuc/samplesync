@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, Package, Users, MapPin, Calendar, Clock, DollarSign, Tag, Target } from 'lucide-react';
+import { ArrowLeft, Package, Users, MapPin, Calendar, DollarSign, Tag, Target, Truck, ExternalLink, Loader2 } from 'lucide-react';
 
 function displayStatus(c) {
   if (c.campaign_status === 'completed') return 'completed';
@@ -46,16 +46,47 @@ function Section({ title, icon: Icon, children }) {
 export default function CampaignDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [campaign, setCampaign] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [campaign,    setCampaign]    = useState(null);
+  const [assignments, setAssignments] = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState('');
+  const [shipLoading, setShipLoading] = useState({}); // keyed by assignment id
 
   useEffect(() => {
-    api.get(`/campaigns/${id}`)
-      .then(({ data }) => setCampaign(data))
-      .catch(() => setError('Campaign not found.'))
-      .finally(() => setLoading(false));
+    Promise.all([
+      api.get(`/campaigns/${id}`),
+      api.get(`/shipments/campaign/${id}`).catch(() => ({ data: [] })),
+    ]).then(([campRes, assignRes]) => {
+      setCampaign(campRes.data);
+      setAssignments(assignRes.data);
+    }).catch(() => setError('Campaign not found.')).finally(() => setLoading(false));
   }, [id]);
+
+  const handleCreateShipment = async (assignmentId) => {
+    setShipLoading(p => ({ ...p, [assignmentId]: 'create' }));
+    setError('');
+    try {
+      const { data } = await api.post(`/shipments/create/${assignmentId}`);
+      setAssignments(p => p.map(a => a.id === assignmentId ? { ...a, ...data } : a));
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to create shipment.');
+    } finally {
+      setShipLoading(p => ({ ...p, [assignmentId]: null }));
+    }
+  };
+
+  const handleSchedulePickup = async (assignmentId) => {
+    setShipLoading(p => ({ ...p, [assignmentId]: 'pickup' }));
+    setError('');
+    try {
+      await api.post(`/shipments/pickup/${assignmentId}`);
+      setAssignments(p => p.map(a => a.id === assignmentId ? { ...a, pickup_scheduled_at: new Date().toISOString() } : a));
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to schedule pickup.');
+    } finally {
+      setShipLoading(p => ({ ...p, [assignmentId]: null }));
+    }
+  };
 
   if (loading) {
     return (
@@ -148,10 +179,84 @@ export default function CampaignDetail() {
 
         {/* Financials */}
         <Section title="Financials" icon={DollarSign}>
-          <Field label="Price per Sample" value={campaign.price_per_sample ? `$${parseFloat(campaign.price_per_sample).toFixed(2)}` : null} />
-          <Field label="Total Cost"       value={`$${totalCost.toLocaleString()}`} />
-          <Field label="Payment Status"   value={campaign.payment_status} />
+          <Field label="Total Cost"     value={totalCost ? `$${totalCost.toLocaleString()}` : null} />
+          <Field label="Payment Status" value={campaign.payment_status} />
         </Section>
+
+        {/* Sampler Assignments & Shipments */}
+        {assignments.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-5">
+              <Truck className="w-4 h-4 text-navy-700/40" />
+              <h2 className="font-bold text-navy-700 text-sm uppercase tracking-widest">Sampler Assignments</h2>
+            </div>
+            <div className="space-y-3">
+              {assignments.map((a) => {
+                const isLoadingCreate = shipLoading[a.id] === 'create';
+                const isLoadingPickup = shipLoading[a.id] === 'pickup';
+                return (
+                  <div key={a.id} className="border border-gray-100 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-3 flex-wrap">
+                      <div>
+                        <p className="font-semibold text-navy-700 text-sm">{a.first_name} {a.last_name}</p>
+                        <p className="text-xs text-navy-700/40">{a.city}, {a.state}</p>
+                        {a.awb_code && (
+                          <p className="text-xs text-navy-700/60 mt-1">
+                            {a.courier_name} · AWB: <span className="font-mono font-semibold">{a.awb_code}</span>
+                          </p>
+                        )}
+                        {a.last_tracking_status && (
+                          <p className="text-xs text-navy-700/50 mt-0.5">{a.last_tracking_status}</p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {/* Status badge */}
+                        <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
+                          a.status === 'delivered' || a.status === 'feedback_received' ? 'bg-lime-100 text-lime-700' :
+                          a.status === 'shipped'   ? 'bg-blue-100 text-blue-700' :
+                          'bg-gray-100 text-gray-500'
+                        }`}>{a.status.replace('_', ' ')}</span>
+
+                        {/* Track link */}
+                        {a.tracking_url && (
+                          <a href={a.tracking_url} target="_blank" rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-navy-700 font-semibold hover:text-lime-600">
+                            Track <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+
+                        {/* Schedule pickup */}
+                        {a.awb_code && !a.pickup_scheduled_at && (
+                          <button
+                            onClick={() => handleSchedulePickup(a.id)}
+                            disabled={isLoadingPickup}
+                            className="inline-flex items-center gap-1 text-xs px-3 py-1.5 border border-navy-700 text-navy-700 font-semibold rounded-full hover:bg-navy-700 hover:text-white transition-colors disabled:opacity-50"
+                          >
+                            {isLoadingPickup ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Schedule Pickup'}
+                          </button>
+                        )}
+                        {a.pickup_scheduled_at && (
+                          <span className="text-xs text-lime-600 font-semibold">Pickup scheduled ✓</span>
+                        )}
+
+                        {/* Create shipment */}
+                        {!a.awb_code && (
+                          <button
+                            onClick={() => handleCreateShipment(a.id)}
+                            disabled={isLoadingCreate || a.status !== 'assigned'}
+                            className="inline-flex items-center gap-1 text-xs px-3 py-1.5 bg-navy-700 text-white font-semibold rounded-full hover:bg-navy-600 transition-colors disabled:opacity-40"
+                          >
+                            {isLoadingCreate ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Truck className="w-3 h-3" /> Ship</>}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
