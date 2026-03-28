@@ -21,8 +21,19 @@ app.use(cors({
   ].filter(Boolean),
   credentials: true,
 }));
+// Webhook route must bypass CORS and use permissive body parsing
+app.use('/api/shipments/webhook', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Catch JSON parse errors (e.g. malformed webhook payloads) and pass empty body
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.parse.failed') return next();
+  next(err);
+});
 
 // Health check
 app.get('/api/health', (req, res) => {
