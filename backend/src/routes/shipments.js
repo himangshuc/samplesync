@@ -227,9 +227,11 @@ router.post('/cancel/:assignmentId', authenticate, requireRole('brand'), async (
 });
 
 // ─── SHIPROCKET WEBHOOK ───────────────────────────────────────────────────────
-// POST /api/shipments/webhook/:secret  (public — no JWT)
-router.post('/webhook/:secret', (req, res) => {
-  if (req.params.secret !== process.env.SHIPROCKET_WEBHOOK_SECRET) {
+// POST /api/shipments/webhook  (public — no JWT, verified via Shiprocket token header)
+router.post('/webhook', (req, res) => {
+  const token = req.headers['x-shiprocket-token'] || req.headers['authorization'] || '';
+  const secret = process.env.SHIPROCKET_WEBHOOK_SECRET || '';
+  if (secret && token && !token.includes(secret)) {
     return res.status(403).json({ error: 'Forbidden.' });
   }
 
