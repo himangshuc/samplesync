@@ -148,4 +148,37 @@ router.post(
   }
 );
 
+// ─── FORGOT PASSWORD: CHECK EMAIL ───
+router.post('/forgot-password/check', async (req, res) => {
+  const { email, role } = req.body;
+  if (!email || !role) return res.status(400).json({ error: 'Email and role are required.' });
+  try {
+    const table = role === 'brand' ? 'brands' : 'users';
+    const result = await db.query(`SELECT id FROM ${table} WHERE email = $1`, [email]);
+    if (!result.rows.length) return res.status(404).json({ error: 'This email does not match our records.' });
+    res.json({ exists: true });
+  } catch (err) {
+    console.error('Forgot password check error:', err);
+    res.status(500).json({ error: 'Server error.' });
+  }
+});
+
+// ─── FORGOT PASSWORD: RESET ───
+router.post('/forgot-password/reset', async (req, res) => {
+  const { email, role, password } = req.body;
+  if (!email || !role || !password) return res.status(400).json({ error: 'All fields are required.' });
+  if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  try {
+    const table = role === 'brand' ? 'brands' : 'users';
+    const result = await db.query(`SELECT id FROM ${table} WHERE email = $1`, [email]);
+    if (!result.rows.length) return res.status(404).json({ error: 'Email not found.' });
+    const password_hash = await bcrypt.hash(password, 10);
+    await db.query(`UPDATE ${table} SET password_hash = $1, updated_at = NOW() WHERE email = $2`, [password_hash, email]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Forgot password reset error:', err);
+    res.status(500).json({ error: 'Server error.' });
+  }
+});
+
 module.exports = router;
